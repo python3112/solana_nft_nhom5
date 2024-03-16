@@ -18,6 +18,13 @@ export function TopBar() {
           navigation.navigate("Settings");
         }}
       />
+        <Appbar.Action
+        icon="face-man"
+        mode="contained-tonal"
+        onPress={() => {
+          navigation.navigate("Settings");
+        }}
+      />
     </Appbar.Header>
   );
 }

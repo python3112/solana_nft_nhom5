@@ -5,6 +5,8 @@ import { HomeScreen } from "../screens/HomeScreen";
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import { useTheme } from "react-native-paper";
 import BlankScreen from "../screens/BlankScreen";
+import Rewart from "../screens/Rewart";
+import TransicionHitoryScreen from "../screens/TransicionHitoryScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,22 +32,44 @@ export function HomeNavigator() {
                   color={color}
                 />
               );
-            case "Blank":
+            case "Rank":
               return (
                 <MaterialCommunityIcon
                   name={
-                    focused ? "application-edit" : "application-edit-outline"
+                    focused ? "chart-areaspline" : "chart-areaspline"
                   }
                   size={size}
                   color={color}
                 />
               );
+              case "Reward":
+                return (
+                  <MaterialCommunityIcon
+                    name={
+                      focused ? "widgets" : "widgets-outline"
+                    }
+                    size={size}
+                    color={color}
+                  />
+                );
+                case "History":
+                  return (
+                    <MaterialCommunityIcon
+                      name={
+                        focused ? "history" : "history"
+                      }
+                      size={size}
+                      color={color}
+                    />
+                  );
           }
         },
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Blank" component={BlankScreen} />
+      <Tab.Screen name="Rank" component={BlankScreen} />
+      <Tab.Screen name="Reward" component={Rewart} />
+      <Tab.Screen name="History" component={TransicionHitoryScreen} />
     </Tab.Navigator>
   );
 }
