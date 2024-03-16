@@ -22,7 +22,7 @@ export function TopBar() {
         icon="face-man"
         mode="contained-tonal"
         onPress={() => {
-          navigation.navigate("Settings");
+          navigation.navigate("Profiles");
         }}
       />
     </Appbar.Header>

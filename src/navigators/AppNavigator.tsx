@@ -18,6 +18,7 @@ import {
   MD3LightTheme,
   adaptNavigationTheme,
 } from "react-native-paper";
+import ProfileScreen from "../screens/ProfileScreen";
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -35,6 +36,7 @@ import {
 type RootStackParamList = {
   Home: undefined;
   Settings: undefined;
+  Profiles:undefined;
   // 🔥 Your screens go here
 };
 
@@ -56,6 +58,7 @@ const AppStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+      <Stack.Screen name="Profiles" component={ProfileScreen} />
       {/** 🔥 Your screens go here */}
     </Stack.Navigator>
   );

@@ -40,6 +40,21 @@ export function TopBarSettingsButton() {
         navigation.navigate("Settings");
       }}
     />
+    
+  );
+}
+
+export function TopBarProfilesButton() {
+  const navigation = useNavigation();
+  return (
+    <IconButton
+      icon="cog"
+      mode="contained-tonal"
+      onPress={() => {
+        navigation.navigate("Settings");
+      }}
+    />
+    
   );
 }
 
