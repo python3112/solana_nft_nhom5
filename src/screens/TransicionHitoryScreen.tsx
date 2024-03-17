@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     },
     item: {
     
-        backgroundColor: '#008000',
+        backgroundColor: '#32CD32',
        paddingTop:10,
         paddingBottom:10,
         paddingEnd:5,
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     },
     item2: {
        
-        backgroundColor: '#A52A2A',
+        backgroundColor: '#FA8072',
         paddingTop:10,
         paddingBottom:10,
         paddingEnd:7,
