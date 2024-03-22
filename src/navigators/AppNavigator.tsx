@@ -20,6 +20,8 @@ import {
 } from "react-native-paper";
 import ProfileScreen from "../screens/ProfileScreen";
 import LoginScreen from "../screens/LoginScreen";
+import SignUpScreen from "../screens/SignUpScreen";
+import { lightBlue200 } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -63,7 +65,7 @@ const AppStack = () => {
         component={HomeNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="Settings" component={Screens.SettingsScreen} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
       <Stack.Screen name="Profiles" component={ProfileScreen} />
       {/** 🔥 Your screens go here */}
     </Stack.Navigator>
@@ -99,7 +101,8 @@ export const AppNavigator = (props: NavigationProps) => {
 
   return (
     <NavigationContainer
-      theme={colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme}
+      // theme={colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme}
+      theme={LightTheme}
       {...props}
     >
       <StatusBar />

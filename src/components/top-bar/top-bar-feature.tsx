@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
-import { Appbar, useTheme } from "react-native-paper";
+import { StyleSheet, TouchableOpacity , Image, View } from "react-native";
+import { Appbar, useTheme , Avatar } from "react-native-paper";
 import { TopBarWalletButton, TopBarWalletMenu } from "./top-bar-ui";
 import { useNavigation } from "@react-navigation/core";
 
@@ -9,29 +9,21 @@ export function TopBar() {
 
   return (
     <Appbar.Header mode="small" style={styles.topBar}>
+      <View style={{marginStart : 10}}>
       <TopBarWalletMenu />
-
-      <Appbar.Action
-        icon="cog"
-        mode="contained-tonal"
-        onPress={() => {
-          navigation.navigate("Settings");
-        }}
-      />
-        <Appbar.Action
-        icon="face-man"
-        mode="contained-tonal"
-        onPress={() => {
-          navigation.navigate("Profiles");
-        }}
-      />
+      </View>
+      
+       <TouchableOpacity style={{ height :'100%' , alignContent:'center' ,marginTop:20 , marginEnd : 20 }} onPress={() => {navigation.navigate("Profiles")}}>
+        <Avatar.Image  style={{alignSelf:'center'}} size={40}  source={require('../../../images/OIP.jpg')}/>
+       </TouchableOpacity>
     </Appbar.Header>
   );
 }
 
 const styles = StyleSheet.create({
   topBar: {
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor : 'rgba(138, 138, 255, 0.5)'
   },
 });

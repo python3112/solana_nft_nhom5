@@ -38,7 +38,7 @@ export function AppModal({
           <View style={styles.action}>
             <View style={styles.buttonGroup}>
               {submit && (
-                <Button
+                <Button textColor="white"
                   mode="contained"
                   onPress={submit}
                   disabled={submitDisabled}
@@ -47,7 +47,7 @@ export function AppModal({
                   {submitLabel}
                 </Button>
               )}
-              <Button onPress={hide} style={styles.button}>
+              <Button onPress={hide} style={styles.button} textColor="white">
                 Close
               </Button>
             </View>
@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     padding: 20,
     marginLeft: 20,
     marginRight: 20,
-    borderRadius: 5,
+    borderRadius: 25,
+
   },
   title: {
     fontSize: 20,
@@ -78,6 +79,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around", // Adjust based on your design requirements
   },
   button: {
+   width:'40%',
+   backgroundColor:'#1974D3',
     margin: 4, // Adjust as needed
   },
 });
