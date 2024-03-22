@@ -73,6 +73,7 @@ export function TopBarWalletMenu() {
 
   return (
     <Menu
+    style ={{marginStart :10}}
       visible={visible}
       onDismiss={closeMenu}
       anchor={
@@ -87,19 +88,7 @@ export function TopBarWalletMenu() {
         title="Copy address"
         leadingIcon="content-copy"
       />
-      <Menu.Item
-        onPress={viewExplorer}
-        title="View Explorer"
-        leadingIcon="open-in-new"
-      />
-      <Menu.Item
-        onPress={async () => {
-          await disconnect();
-          closeMenu();
-        }}
-        title="Disconnect"
-        leadingIcon="link-off"
-      />
+
     </Menu>
   );
 }

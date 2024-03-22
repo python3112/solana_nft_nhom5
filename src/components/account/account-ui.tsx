@@ -6,7 +6,7 @@ import {
   useRequestAirdrop,
   useTransferSol,
 } from "./account-data-access";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import {
   Text,
   useTheme,
@@ -28,8 +28,8 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   return (
     <>
       <View style={styles.accountBalance}>
-        <Text variant="titleMedium">Current Balance</Text>
-        <Text variant="displayLarge">
+        <Text variant="titleMedium" style={{color : 'white'  , alignSelf  : 'center'}}>Current Balance</Text>
+        <Text variant="headlineLarge" style={{color : 'white' , fontWeight : "bold" , alignSelf :'center'}}>
           {query.data ? lamportsToSol(query.data) : "..."} SOL
         </Text>
       </View>
@@ -39,8 +39,6 @@ export function AccountBalance({ address }: { address: PublicKey }) {
 
 export function AccountButtonGroup({ address }: { address: PublicKey }) {
   const requestAirdrop = useRequestAirdrop({ address });
-  const [showAirdropModal, setShowAirdropModal] = useState(false);
-  const [showReceiveModal, setShowReceiveModal] = useState(false);
   const [showSendModal, setShowSendModal] = useState(false);
 
   return (
@@ -70,13 +68,15 @@ export function AccountButtonGroup({ address }: { address: PublicKey }) {
         >
           Airdrop
         </Button> */}
-        <Button
-          mode="contained"
+        <TouchableOpacity
+          
           onPress={() => setShowSendModal(true)}
           style={{ marginLeft: 6 }}
         >
+         <Text>
           Send
-        </Button>
+         </Text>
+        </TouchableOpacity>
         {/* <Button
           mode="contained"
           onPress={() => setShowReceiveModal(true)}
@@ -148,9 +148,9 @@ export function TransferSolModal({
       submitLabel="Send"
       submitDisabled={!destinationAddress || !amount}
     >
-      <View style={{ padding: 20 }}>
+      <View style={{ padding: 20  , borderRadius: 20}}>
         <TextInput
-          label="Amount (SOL)"
+          label="Amount"
           value={amount}
           onChangeText={setAmount}
           keyboardType="numeric"
@@ -158,7 +158,7 @@ export function TransferSolModal({
           style={{ marginBottom: 20 }}
         />
         <TextInput
-          label="Destination Address"
+          label="Wallet Address"
           value={destinationAddress}
           onChangeText={setDestinationAddress}
           mode="outlined"
@@ -289,7 +289,7 @@ export function AccountTokenBalance({ address }: { address: PublicKey }) {
 
 const styles = StyleSheet.create({
   accountBalance: {
-    marginTop: 12,
+    alignSelf :'center',
   },
   accountButtonGroup: {
     paddingVertical: 4,

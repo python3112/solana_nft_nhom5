@@ -1,7 +1,5 @@
-
 import {
     View,
-    Button,
     StyleSheet,
     SafeAreaView,
     TouchableOpacity,
@@ -10,19 +8,21 @@ import {
 } from "react-native";
 
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { NavigationContainer } from "@react-navigation/native";
 import { SignInFeature } from "../components/sign-in/sign-in-feature";
 import { useAuthorization } from "../utils/useAuthorization";
 import React, { useEffect, useState } from "react";
 import { TextInput } from "@react-native-material/core";
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-export default function LoginScreen({ navigation }: { navigation: any }) {
+export default function SignUpScreen({ navigation }: { navigation: any }) {
+   
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [data, setData] = useState([]);
-    const [rememberPassword, setRememberPassword] = useState(false);
+    const [fullname, setFullname] = useState('');
+    const [email, setEmail] = useState('');
+    const [birthDay, setBirthday] = useState('');
+    const [rePassword, setRepassword] = useState('');
+  
     // Chỉ định kiểu dữ liệu cho props navigation
     const { selectedAccount } = useAuthorization();
     const handlePress = () => {
@@ -32,62 +32,71 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
  
     return (
         <SafeAreaView style={styles.container}>
-        <Image style={styles.logo} source={require('../../images/logo.png')} />
-        <TextInput
-            variant='outlined'
-            label='Username'
-            style={styles.input}
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-        />
-        <TextInput
-            secureTextEntry
-            variant='outlined'
-            label='Password'
-            style={styles.input}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-        />
-        <View style={styles.checkboxContainer}>
-            <CheckBox
-                title='Remmember'
-                checked={rememberPassword}
-                onPress={() => setRememberPassword(!rememberPassword)}
-                containerStyle={styles.checkbox}
+        <Text style={{ fontSize: 30, color: '#57abff',fontWeight:'bold',fontStyle:'italic'}}>
+          Chào mừng bạn đến với
+        </Text>
+              <Text style={{marginBottom:20, fontSize: 40, color: '#57abff',fontWeight:'bold'}}>DevTales</Text>
+            <TextInput
+                color='#57abff'
+                variant='outlined'
+                label='Tài khoản'
+                style={styles.input}
+                value={username}
+                onChangeText={(text) => setUsername(text)}
             />
-        </View>
-
-        <TouchableOpacity onPress={()=> handlePress()} style={styles.btnDN}>
-            <Text style={{
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: 17
-            }}>Login</Text>
-        </TouchableOpacity>
-        <View style={styles.textDNK}>
-            <View style={styles.divider} />
-            <Text style={styles.orText}>Or Login With</Text>
-            <View style={styles.divider} />
-        </View>
-        <View style={styles.viewDNK}>
-            <TouchableOpacity style={styles.btnDNK}>
-                <Image style={styles.icon} source={require('../../images/facebook.png')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btnDNK}>
-                <Image style={styles.icon} source={require('../../images/google.png')} />
-            </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={()=>navigation.navigate('SignUp')} style={styles.btnDK}>
-            <Text style={styles.btnText}>Register</Text>
-        </TouchableOpacity>
-    </SafeAreaView>
+            <TextInput
+                color='#57abff'
+                variant='outlined'
+                label='Họ và tên'
+                style={styles.input}
+                value={fullname}
+                onChangeText={(text) => setFullname(text)}
+            />
+            <TextInput
+                color='#57abff'
+                variant='outlined'
+                label='Ngày sinh'
+                style={styles.input}
+                value={birthDay}
+                onChangeText={(text) => setBirthday(text)}
+            />
+            <TextInput
+                color='#57abff'
+                variant='outlined'
+                label='Email'
+                keyboardType='email-address'
+                style={styles.input}
+                value={email}
+                onChangeText={(text) => setEmail(text)}
+            />
+            <TextInput
+                color='#57abff'
+                secureTextEntry
+                variant='outlined'
+                label='Mật khẩu'
+                style={styles.input}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+            />
+           <TextInput
+              color='#57abff'
+                secureTextEntry
+                variant='outlined'
+                label='Nhập lại mật khẩu'
+                style={styles.input}
+                value={rePassword}
+                onChangeText={(text) => setRepassword(text)}
+            />
+           <TouchableOpacity onPress={() =>{}} style={styles.btnDK}>
+                        <Text style={styles.btnText}>Register</Text>
+                    </TouchableOpacity>
+            </SafeAreaView>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FFFF',
+        backgroundColor: '#F0FFFF',
         alignItems: 'center'
     },
     checkboxContainer: {
@@ -135,6 +144,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
+        marginTop:30,
         marginBottom: 20
     },
     viewDNK: {

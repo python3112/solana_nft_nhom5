@@ -119,6 +119,7 @@ export default function Rewart() {
     
 
     <View style={styles.screenContainer}>
+      
       <Text
         variant="headlineLarge"
         style={{ textAlign: "center", fontWeight: "bold", paddingBottom: 16 }}
@@ -149,6 +150,7 @@ function GetRewardButton({
 
   return (
     <>
+    {}
       <AppModal
         title="Get Reward"
         hide={() => setShowAirdropModal(false)}
