@@ -46,22 +46,22 @@ export function AccountButtonGroup({ address }: { address: PublicKey }) {
   return (
     <>
       <View style={styles.accountButtonGroup}>
-        <AirdropRequestModal
+        {/* <AirdropRequestModal
           hide={() => setShowAirdropModal(false)}
           show={showAirdropModal}
           address={address}
-        />
+        /> */}
         <TransferSolModal
           hide={() => setShowSendModal(false)}
           show={showSendModal}
           address={address}
         />
-        <ReceiveSolModal
+        {/* <ReceiveSolModal
           hide={() => setShowReceiveModal(false)}
           show={showReceiveModal}
           address={address}
-        />
-        <Button
+        /> */}
+        {/* <Button
           mode="contained"
           disabled={requestAirdrop.isPending}
           onPress={() => {
@@ -69,7 +69,7 @@ export function AccountButtonGroup({ address }: { address: PublicKey }) {
           }}
         >
           Airdrop
-        </Button>
+        </Button> */}
         <Button
           mode="contained"
           onPress={() => setShowSendModal(true)}
@@ -77,13 +77,13 @@ export function AccountButtonGroup({ address }: { address: PublicKey }) {
         >
           Send
         </Button>
-        <Button
+        {/* <Button
           mode="contained"
           onPress={() => setShowReceiveModal(true)}
           style={{ marginLeft: 6 }}
         >
           Receive
-        </Button>
+        </Button> */}
       </View>
     </>
   );

@@ -19,6 +19,7 @@ import {
   adaptNavigationTheme,
 } from "react-native-paper";
 import ProfileScreen from "../screens/ProfileScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -51,7 +52,12 @@ const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
   return (
-    <Stack.Navigator initialRouteName={"Home"}>
+    <Stack.Navigator initialRouteName={"Login"}>
+      <Stack.Screen 
+      name="Login"
+      component={LoginScreen}
+      options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="HomeStack"
         component={HomeNavigator}

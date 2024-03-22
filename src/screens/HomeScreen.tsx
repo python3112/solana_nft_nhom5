@@ -14,26 +14,10 @@ export function HomeScreen() {
 
   return (
     <View style={styles.screenContainer}>
-      <Text
-        style={{ fontWeight: "bold", marginBottom: 12 ,textAlign :'center' }}
-        variant="displaySmall"
-      >
-        Home Wallet
-      </Text>
-      {selectedAccount ? (
-        <AccountDetailFeature />
-      ) : (
-        <>
-            <View style={{alignItems : "center"}}>
-                <Image source={require('../Image/solanaBanner.png')}/>
-            </View>
-          <SignInFeature />
-        </>
-      )}
+    <AccountDetailFeature/>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   screenContainer: {
     padding: 16,
