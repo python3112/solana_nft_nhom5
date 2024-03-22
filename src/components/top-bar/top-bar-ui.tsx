@@ -44,19 +44,7 @@ export function TopBarSettingsButton() {
   );
 }
 
-export function TopBarProfilesButton() {
-  const navigation = useNavigation();
-  return (
-    <IconButton
-      icon="cog"
-      mode="contained-tonal"
-      onPress={() => {
-        navigation.navigate("Settings");
-      }}
-    />
-    
-  );
-}
+
 
 export function TopBarWalletMenu() {
   const { selectedAccount } = useAuthorization();
