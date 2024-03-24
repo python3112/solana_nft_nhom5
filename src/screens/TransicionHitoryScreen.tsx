@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
-import { FlatList, StyleSheet, View, Text, TouchableOpacity, Button } from "react-native";
+import { FlatList, StyleSheet, View, Text, TouchableOpacity, Button  , Image} from "react-native";
 import { useEffect, useState } from 'react'
-import { ProgressBar } from "react-native-paper";
+import { ProgressBar  , Avatar} from "react-native-paper";
 import { useAuthorization } from "../utils/useAuthorization";
 import { ProgressBarTsx } from "../utils/ProgressBar";
 import { ShyftSdk, Network } from '@shyft-to/js';
@@ -12,6 +12,7 @@ interface SimplifiedTxnInfo {
     amount: number;
     fee: number;
     timestamp: string;
+    type : string;
 }
 
 export default function TransicionHitoryScreen() {
@@ -28,17 +29,13 @@ export default function TransicionHitoryScreen() {
                     account: selectedAccount.publicKey.toString(),
                     enableRaw: true,
                 });
-
-             console.log(transactions);
-
-
                 const simplifiedTransactions: SimplifiedTxnInfo[] = transactions.map(transaction => {
-                  
+
                     const amount = transaction.actions.map(action => action.info.amount)
-                  
+
                     return {
                         fee_payer: transaction.fee_payer,
-                        amount: transaction.actions.length == 1  ? transaction.actions[0].info.amount : amount.at(2),
+                        amount: transaction.actions.length == 1 ? transaction.actions[0].info.amount : amount.at(2),
                         fee: transaction.fee,
                         timestamp: format(new Date(transaction.timestamp), 'dd/MM/yyyy HH:mm:ss'),
                         type: transaction.type
@@ -47,17 +44,25 @@ export default function TransicionHitoryScreen() {
                 setlistTransactions(simplifiedTransactions);
             }
         };
-       
+
         fetchData();
     }, [selectedAccount]);
+   
 
     const renderItem = ({ item }: { item: SimplifiedTxnInfo }) =>
     (
-        <View style={item.fee_payer === selectedAccount?.publicKey.toString() ? styles.item2 : styles.item} >
-            <Text style={{ fontSize: 16, color: '#FFFFFF', marginStart: 5 }}>Amount: {item.amount == null ? 1 : item.amount} Sol</Text>
-            <Text style={{ fontSize: 16, color: '#FFFFFF', marginStart: 5 }}>Fee: {item.fee} Sol</Text>
-            <Text style={{ fontSize: 10, color: '#FFFFFF', marginStart: 5 }}>Time: {item.timestamp}</Text>
-        </View>
+        <TouchableOpacity style={item.fee_payer === selectedAccount?.publicKey.toString() ? styles.item2 : styles.item} >
+            <View style={{marginStart  : 5}}>
+            <Text style={{ fontSize: 20, color: '#FFFFFF', marginStart: 5, fontWeight:'bold' }}>Amount: {item.amount == null ? 1 : item.amount} Sol</Text>
+            <Text style={{ fontSize: 20, color: '#FFFFFF', marginStart: 5  , fontWeight:'bold'}}>Fee: {item.fee} Sol</Text>
+            <Text style={{ fontSize: 13, color: '#FFFFFF', marginStart: 5 , fontWeight:'bold' }}>Time: {item.timestamp}</Text>
+           
+            </View>
+           
+           
+
+          
+        </TouchableOpacity>
     )
 
 
@@ -86,24 +91,29 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     item: {
-
+        
         backgroundColor: '#32CD32',
         paddingTop: 10,
         paddingBottom: 10,
         paddingEnd: 5,
         paddingStart: 5,
+        
         marginTop: 10,
-        borderRadius: 10,
+        borderRadius: 16,
+        margin: 5,
+        elevation: 4,
     },
     item2: {
-
+        
         backgroundColor: '#FA8072',
         paddingTop: 10,
+     
         paddingBottom: 10,
         paddingEnd: 7,
         paddingStart: 7,
         marginTop: 10,
-
-        borderRadius: 10,
+        margin: 5,
+        elevation: 4,
+        borderRadius: 16,
     },
 });

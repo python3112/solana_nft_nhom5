@@ -8,6 +8,7 @@ import BlankScreen from "../screens/BlankScreen";
 import Rewart from "../screens/Rewart";
 import { Image, TouchableOpacity, View  , Text } from 'react-native'
 import TransicionHitoryScreen from "../screens/TransicionHitoryScreen";
+import DeitalMission from "../screens/DeitalMission";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +24,7 @@ export function HomeNavigator() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
        tabBarShowLabel:false,
-        tabBarStyle: { position: 'absolute', bottom: 20, left: 20, right: 20, height: 70  , elevation : 0 ,  borderRadius : 15 },
+        tabBarStyle: { position: 'absolute', bottom: 15, left: 15, right: 15, height: 70  , elevation : 0 ,  borderRadius : 15 },
         header: () => <TopBar />,
         // tabBarIcon: ({ focused, color, size }) => {
         //   switch (route.name) {
@@ -126,6 +127,7 @@ export function HomeNavigator() {
           </View>
         ),
       }} />
+      
     </Tab.Navigator>
   );
 }

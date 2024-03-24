@@ -6,7 +6,7 @@ import {
   useRequestAirdrop,
   useTransferSol,
 } from "./account-data-access";
-import { View, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from "react-native";
 import {
   Text,
   useTheme,
@@ -27,12 +27,14 @@ export function AccountBalance({ address }: { address: PublicKey }) {
   const query = useGetBalance({ address });
   return (
     <>
-      <View style={styles.accountBalance}>
-        <Text variant="titleMedium" style={{color : 'white'  , alignSelf  : 'center'}}>Current Balance</Text>
-        <Text variant="headlineLarge" style={{color : 'white' , fontWeight : "bold" , alignSelf :'center'}}>
-          {query.data ? lamportsToSol(query.data) : "..."} SOL
+      <TouchableOpacity style={styles.accountBalance}>
+        
+        <Image source={require('../../../images/logoSol.png')} style={{ width: 40, height: 40, marginEnd: 10 , alignSelf:'center'}}>
+        </Image>
+        <Text variant="headlineLarge" style={{ color: 'black', fontWeight: "bold", alignSelf: 'center' }}>
+          {query.data ? lamportsToSol(query.data) : "..."}
         </Text>
-      </View>
+      </TouchableOpacity>
     </>
   );
 }
@@ -40,25 +42,27 @@ export function AccountBalance({ address }: { address: PublicKey }) {
 export function AccountButtonGroup({ address }: { address: PublicKey }) {
   const requestAirdrop = useRequestAirdrop({ address });
   const [showSendModal, setShowSendModal] = useState(false);
+  const [showAirdropModal, setShowAirdropModal] = useState(false);
+  const [showReceiveModal, setShowReceiveModal] = useState(false);
 
   return (
     <>
       <View style={styles.accountButtonGroup}>
-        {/* <AirdropRequestModal
+        <AirdropRequestModal
           hide={() => setShowAirdropModal(false)}
           show={showAirdropModal}
           address={address}
-        /> */}
+        />
         <TransferSolModal
           hide={() => setShowSendModal(false)}
           show={showSendModal}
           address={address}
         />
-        {/* <ReceiveSolModal
+        <ReceiveSolModal
           hide={() => setShowReceiveModal(false)}
           show={showReceiveModal}
           address={address}
-        /> */}
+        />
         {/* <Button
           mode="contained"
           disabled={requestAirdrop.isPending}
@@ -68,22 +72,35 @@ export function AccountButtonGroup({ address }: { address: PublicKey }) {
         >
           Airdrop
         </Button> */}
+        {/* <TouchableOpacity
+
+          onPress={() => setShowAirdropModal(true)}
+          style={styles.btnAccount}
+        >
+          <Text>
+            Send
+          </Text>
+        </TouchableOpacity> */}
+
         <TouchableOpacity
-          
+
           onPress={() => setShowSendModal(true)}
-          style={{ marginLeft: 6 }}
+          style={styles.btnAccount}
         >
-         <Text>
-          Send
-         </Text>
+          <Text style={styles.txtBtn}>
+            Send
+          </Text>
         </TouchableOpacity>
-        {/* <Button
-          mode="contained"
+
+        <TouchableOpacity
+
           onPress={() => setShowReceiveModal(true)}
-          style={{ marginLeft: 6 }}
+          style={styles.btnAccount}
         >
-          Receive
-        </Button> */}
+          <Text style={styles.txtBtn}>
+            Received
+          </Text>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -148,7 +165,7 @@ export function TransferSolModal({
       submitLabel="Send"
       submitDisabled={!destinationAddress || !amount}
     >
-      <View style={{ padding: 20  , borderRadius: 20}}>
+      <View style={{ padding: 20, borderRadius: 20 }}>
         <TextInput
           label="Amount"
           value={amount}
@@ -289,14 +306,49 @@ export function AccountTokenBalance({ address }: { address: PublicKey }) {
 
 const styles = StyleSheet.create({
   accountBalance: {
-    alignSelf :'center',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    marginTop: 20,
+    marginBottom: 20,
+    width: '40%',
+    height: 90,
+    paddingStart: 10,
+    paddingEnd: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    borderRadius :15,
+   
+
   },
   accountButtonGroup: {
-    paddingVertical: 4,
+    // paddingVertical: 4,
+    width: '100%',
+    justifyContent: 'space-around',
+    height: 50,
     flexDirection: "row",
   },
   error: {
     color: "red",
     padding: 8,
   },
+  btnAccount: {
+    marginLeft: 6,
+    borderRadius: 10,
+    shadowColor: 'black',
+    width: '40%',
+    height: '100%',
+    backgroundColor: 'gray'
+
+
+  },
+  txtBtn: {
+    fontSize: 20,
+    textAlignVertical: 'center',
+    width: '100%',
+    height: '100%',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: 'white'
+
+  }
 });

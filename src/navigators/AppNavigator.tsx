@@ -22,6 +22,8 @@ import ProfileScreen from "../screens/ProfileScreen";
 import LoginScreen from "../screens/LoginScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import { lightBlue200 } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
+import DeitalMission from "../screens/DeitalMission";
+import DeitalAccountRanking from "../screens/DeitalAccountRanking";
 
 /**
  * This type allows TypeScript to know what routes are defined in this navigator
@@ -65,8 +67,11 @@ const AppStack = () => {
         component={HomeNavigator}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+      <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false ,headerTitle : 'Register Account'   }} />
       <Stack.Screen name="Profiles" component={ProfileScreen} />
+      <Stack.Screen name="deital" component={DeitalMission} />
+      <Stack.Screen name="deitalAcc" component={DeitalAccountRanking}  options={{ headerTitle : 'Deital Account' }} />
+   
       {/** 🔥 Your screens go here */}
     </Stack.Navigator>
   );
