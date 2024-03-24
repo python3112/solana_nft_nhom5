@@ -6,7 +6,8 @@ import {
     SafeAreaView,
     TouchableOpacity,
     Image,
-    Text
+    Text,
+    ToastAndroid
 } from "react-native";
 
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
@@ -17,11 +18,17 @@ import React, { useEffect, useState } from "react";
 import { TextInput } from "@react-native-material/core";
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+interface UserData {
+    userName: string;
+    userPass: string;
+    _id: string;
+}
 
+const ipApi = "http://192.168.1.89:3000/";
 export default function LoginScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<UserData[]>([])
     const [rememberPassword, setRememberPassword] = useState(false);
     // Chỉ định kiểu dữ liệu cho props navigation
     const { selectedAccount } = useAuthorization();
@@ -29,58 +36,128 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         navigation.navigate('HomeStack')
     };
 
- 
+    useEffect(() => {
+        checkRememberPassword()
+        downloadData();
+
+    }, [])
+
+
+
+    const checkRememberPassword = async () => {
+        try {
+            const value = await AsyncStorage.getItem('rememberPassword');
+            setRememberPassword(value === 'true');
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const downloadData = async () => {
+        try {
+            const response = await fetch(`${ipApi}users/`);
+            const apiData = await response.json();
+            setData( apiData);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+
+
+
+    const handleLogin = async () => {
+        if (username.trim() === '') {
+            ToastAndroid.show( "Vui lòng nhập đúng tài khoản", ToastAndroid.SHORT);
+        } else if (password.trim() === '') {
+            ToastAndroid.show( "Vui lòng nhập mật khẩu" , ToastAndroid.SHORT);
+        } else {
+            const check = await fetch(`${ipApi}users/userslogin` , {
+                method: 'POST',
+                headers: { "Content-Type": "application/json", },
+                body: JSON.stringify({ userName: username, userPass: password}),
+            })
+
+            if (check.ok) {
+                navigation.navigate('HomeStack');
+                if (rememberPassword) {
+                    try {
+                        // Lưu trạng thái nhớ mật khẩu và thông tin tài khoản, mật khẩu vào AsyncStorage
+                        await AsyncStorage.setItem('rememberPassword', 'true');
+                        await AsyncStorage.setItem('username', username);
+                        await AsyncStorage.setItem('password', password);
+                    } catch (error) {
+                        console.log(error);
+                    }
+                } else {
+                    try {
+                        // Xóa trạng thái nhớ mật khẩu và thông tin tài khoản, mật khẩu khỏi AsyncStorage
+                        await AsyncStorage.removeItem('rememberPassword');
+                        await AsyncStorage.removeItem('username');
+                        await AsyncStorage.removeItem('password');
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+                // await AsyncStorage.setItem('userID', check._id);
+                
+            } else {
+                ToastAndroid.show( "Vui lòng nhập tài khoản" , ToastAndroid.SHORT);
+            }
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-        <Image style={styles.logo} source={require('../../images/logo.png')} />
-        <TextInput
-            variant='outlined'
-            label='Username'
-            style={styles.input}
-            value={username}
-            onChangeText={(text) => setUsername(text)}
-        />
-        <TextInput
-            secureTextEntry
-            variant='outlined'
-            label='Password'
-            style={styles.input}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-        />
-        <View style={styles.checkboxContainer}>
-            <CheckBox
-                title='Remmember'
-                checked={rememberPassword}
-                onPress={() => setRememberPassword(!rememberPassword)}
-                containerStyle={styles.checkbox}
+            <Image style={styles.logo} source={require('../../images/logo.png')} />
+            <TextInput
+                variant='outlined'
+                label='Username'
+                style={styles.input}
+                value={username}
+                onChangeText={(text) => setUsername(text)}
             />
-        </View>
+            <TextInput
+                secureTextEntry
+                variant='outlined'
+                label='Password'
+                style={styles.input}
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+            />
+            <View style={styles.checkboxContainer}>
+                <CheckBox
+                    title='Remmember'
+                    checked={rememberPassword}
+                    onPress={() => setRememberPassword(!rememberPassword)}
+                    containerStyle={styles.checkbox}
+                />
+            </View>
 
-        <TouchableOpacity onPress={()=> handlePress()} style={styles.btnDN}>
-            <Text style={{
-                fontWeight: 'bold',
-                color: 'white',
-                fontSize: 17
-            }}>Login</Text>
-        </TouchableOpacity>
-        <View style={styles.textDNK}>
-            <View style={styles.divider} />
-            <Text style={styles.orText}>Or Login With</Text>
-            <View style={styles.divider} />
-        </View>
-        <View style={styles.viewDNK}>
-            <TouchableOpacity style={styles.btnDNK}>
-                <Image style={styles.icon} source={require('../../images/facebook.png')} />
+            <TouchableOpacity onPress={() => handleLogin()} style={styles.btnDN}>
+                <Text style={{
+                    fontWeight: 'bold',
+                    color: 'white',
+                    fontSize: 17
+                }}>Login</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.btnDNK}>
-                <Image style={styles.icon} source={require('../../images/google.png')} />
+            <View style={styles.textDNK}>
+                <View style={styles.divider} />
+                <Text style={styles.orText}>Or Login With</Text>
+                <View style={styles.divider} />
+            </View>
+            <View style={styles.viewDNK}>
+                <TouchableOpacity style={styles.btnDNK}>
+                    <Image style={styles.icon} source={require('../../images/facebook.png')} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btnDNK}>
+                    <Image style={styles.icon} source={require('../../images/google.png')} />
+                </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')} style={styles.btnDK}>
+                <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPress={()=>navigation.navigate('SignUp')} style={styles.btnDK}>
-            <Text style={styles.btnText}>Register</Text>
-        </TouchableOpacity>
-    </SafeAreaView>
+        </SafeAreaView>
     );
 }
 
@@ -93,8 +170,8 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         alignSelf: 'flex-start',
-        marginStart: 23,        
-        marginTop:15,
+        marginStart: 23,
+        marginTop: 15,
     },
     checkbox: {
         backgroundColor: 'transparent',
@@ -109,7 +186,7 @@ const styles = StyleSheet.create({
         width: '80%',
         height: 50,
         borderColor: 'gray',
-        marginTop:20,
+        marginTop: 20,
     },
     btnDN: {
         width: "80%",

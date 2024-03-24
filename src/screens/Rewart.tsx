@@ -56,7 +56,7 @@ type Mission = {
   completed: boolean;
 };
 
-export default function Rewart() {
+export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
 
   if (!selectedAccount) {
@@ -80,8 +80,9 @@ export default function Rewart() {
     );
   };
 
+
   const renderItem = ({ item }:  {item : Mission}) => (
-    <TouchableOpacity style={styles.item}>
+    <TouchableOpacity style={styles.item}   onPress={() => navigation.navigate("deital", { item })}>
       <View>
         <Text variant="titleMedium">{item.title}</Text>
         <Text
@@ -120,12 +121,7 @@ export default function Rewart() {
 
     <View style={styles.screenContainer}>
       
-      <Text
-        variant="headlineLarge"
-        style={{ textAlign: "center", fontWeight: "bold", paddingBottom: 16 }}
-      >
-        Missions And Reward
-      </Text>
+      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Mission and reward</Text>
 
       <FlatList
         data={data}

@@ -1,56 +1,106 @@
-import React from 'react';
-import { View, Text, SafeAreaView, FlatList } from 'react-native';
-
+import React, { useState , useEffect } from 'react';
+import { View, SafeAreaView, FlatList, TouchableOpacity, StyleSheet , Image } from 'react-native';
+import { Button, Icon, Text, useTheme, Avatar } from "react-native-paper";
+const ipApi = "http://192.168.1.89:3000/";
 interface ItemProps {
-  name: string;
-  score: number;
+  _id: number;
+  avata: string;
+  fullName:string,
+  userName:string,
+  userPass:string, 
+  adressWallet : string,
+  point :number,
+  pointComplete : number,
+  userPms:string
+
 }
 
-const dummyData = [
-  { id: 1, name: 'Nguyen van linh', score: 0.5 },
-  { id: 2, name: 'Nguyen van linh', score: 0.5 },
-  { id: 3, name: 'Nguyen van linh', score: 0.5 },
-  { id: 4, name: 'Nguyen van linh', score: 0.5 },
-  { id: 5, name: 'Nguyen van linh', score: 0.5 },
-];
+export default function Rewart({ navigation }: { navigation: any }) {
 
-const ItemView: React.FC<ItemProps> = React.memo(({ name, score }) => {
-  return (
-    <View
-      style={{
-        width: '95%',
-        backgroundColor: 'white',
-        marginVertical: 10,
-        shadowColor: 'black',
-        shadowOffset: { height: 1, width: 1 },
-        shadowOpacity: 0.5,
-        shadowRadius: 2,
-        borderWidth: 0.5,
-        borderColor: 'silver',
-        borderRadius: 20,
-        alignSelf: 'center',
-        padding: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between'
-      }}>
-      <Text style={{ color: 'black', fontSize: 15 }}>{name}</Text>
-      <Text style={{ color: 'black', fontSize: 15 }}>{score}</Text>
-    </View>
+  const [listdata, setlistdata] = useState([])
+
+  useEffect( () => {
+    const downloadData = async () => {
+      try {
+        const response = await fetch(`${ipApi}users/topusers`);
+        const apiData = await response.json();
+        console.log(apiData)
+        setlistdata(apiData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    downloadData();
+  
+    
+  }, [])
+
+
+
+  const getRewardImage = (index: number) => {
+    if (index === 0) {
+      return require('../../images/winner.png');
+    } else if (index === 1) {
+      return require('../../images/silver-medal.png');
+    } else if (index === 2) {
+      return require('../../images/bronze-medal.png');
+    } else {
+      return require('../../images/top10.png') ;
+    }
+  };
+  
+  
+  const renderItem = ({ item , index }: { item: ItemProps ; index : number   }) => (
+    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate("deitalAcc", { item })}>
+  
+      <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Avatar.Image size={50} source={{ uri: item.avata }} />
+          <Text style={{ marginStart: 10 }} variant="titleMedium">{item.fullName}</Text>
+        </View>
+      
+        <Image source={getRewardImage(index)}/>
+  
+      </View>
+  
+      
+      <View style={{flexDirection :'row' , justifyContent :'space-between' , width :'100%'}}>
+  
+        
+  
+      </View>
+  
+  
+    </TouchableOpacity>
   );
-});
-
-const BlankScreen = () => {
+  
   return (
     <SafeAreaView style={{ width: '90%', height: '100%', alignSelf: 'center' }}>
-      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Bảng xếp hạng</Text>
+      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Ranking</Text>
       <FlatList
-        data={dummyData}
-        keyExtractor={e => e.id.toString()}
-        renderItem={({ item, index }) => <ItemView name={item.name} score={item.score} />}
+        data={listdata}
+        keyExtractor={e => e._id.toString()}
+        renderItem={renderItem}
       />
     </SafeAreaView>
   );
 };
 
-export default BlankScreen;
+const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    padding: 16,
+  },
+  item: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 16,
+    margin: 8,
+    borderRadius: 16,
+    backgroundColor: "#fff",
+    elevation: 4,
+  },
+});
+
+

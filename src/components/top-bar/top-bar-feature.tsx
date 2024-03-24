@@ -24,6 +24,6 @@ const styles = StyleSheet.create({
   topBar: {
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor : 'rgba(138, 138, 255, 0.5)'
+
   },
 });
