@@ -80,7 +80,10 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             })
 
             if (check.ok) {
+                const user = await check.json()
+                console.log(user._id);
                 navigation.navigate('HomeStack');
+                await AsyncStorage.setItem("user" , user._id);
                 if (rememberPassword) {
                     try {
                         // Lưu trạng thái nhớ mật khẩu và thông tin tài khoản, mật khẩu vào AsyncStorage
