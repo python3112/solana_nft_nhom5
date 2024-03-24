@@ -88,6 +88,14 @@ export function TopBarWalletMenu() {
         title="Copy address"
         leadingIcon="content-copy"
       />
+       <Menu.Item
+        onPress={async () => {
+          await disconnect();
+          closeMenu();
+        }}
+        title="Disconnect"
+        leadingIcon="link-off"
+      />
 
     </Menu>
   );

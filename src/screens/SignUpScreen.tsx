@@ -32,10 +32,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
  
     return (
         <SafeAreaView style={styles.container}>
-        <Text style={{ fontSize: 30, color: '#57abff',fontWeight:'bold',fontStyle:'italic'}}>
-          Chào mừng bạn đến với
-        </Text>
-              <Text style={{marginBottom:20, fontSize: 40, color: '#57abff',fontWeight:'bold'}}>DevTales</Text>
+        <Image style={styles.logo} source={require('../../images/logo.png')} />
+              
             <TextInput
                 color='#57abff'
                 variant='outlined'
@@ -52,23 +50,8 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
                 value={fullname}
                 onChangeText={(text) => setFullname(text)}
             />
-            <TextInput
-                color='#57abff'
-                variant='outlined'
-                label='Ngày sinh'
-                style={styles.input}
-                value={birthDay}
-                onChangeText={(text) => setBirthday(text)}
-            />
-            <TextInput
-                color='#57abff'
-                variant='outlined'
-                label='Email'
-                keyboardType='email-address'
-                style={styles.input}
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-            />
+          
+          
             <TextInput
                 color='#57abff'
                 secureTextEntry
@@ -112,7 +95,7 @@ const styles = StyleSheet.create({
     logo: {
         width: 200,
         height: 200,
-        marginVertical: 50,
+        marginVertical: 30,
     },
     input: {
         width: '80%',
