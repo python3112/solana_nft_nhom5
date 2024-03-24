@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useEffect , useState} from "react";
 import { StyleSheet, View, Image, ImageBackground, TouchableOpacity } from "react-native";
 
 import { Section } from "../Section";
@@ -20,9 +20,45 @@ import {
   DataTable,
   TextInput,
 } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const ipApi = "http://192.168.1.89:3000/";
+interface user {
+  _id: number;
+  avata: string;
+  fullName:string,
+  userName:string,
+  userPass:string, 
+  adressWallet : string,
+  point :number,
+  pointComplete : number,
+  userPms:string
 
+}
 export function HomeScreen() {
   const { selectedAccount } = useAuthorization();
+  const [ttuser, setUser] = useState<user>();
+
+
+
+  useEffect(() => {
+    const getUser = async () => {
+      const user = await AsyncStorage.getItem("user");
+      const check = await fetch(`${ipApi}users/getone/${user}`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json", }, 
+    })
+    if(check.ok){
+      const last =  await check.json();
+      console.log(last)
+      setUser(last);
+    }else{return;}
+    
+
+    }
+    getUser();
+
+  }, [])
+
 
   return (
     <View style={styles.screenContainer}>
@@ -49,29 +85,29 @@ export function HomeScreen() {
 
           <View>
             <TouchableOpacity style={styles.item}>
-              <View style={{flexDirection:'row' , alignItems:'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-              <Avatar.Image size={50} source={require('../../images/logoSol.png')} />
-              <Text style={{
-                    fontWeight:'bold',
-                    fontSize: 22,
-                    color: 'black',
-                    marginStart:10
-                  
+                {/* <Avatar.Image size={50} source={{uri : ttuser.avata}} /> */}
+                <Text style={{
+                  fontWeight: 'bold',
+                  fontSize: 22,
+                  color: 'black',
+                  marginStart: 10
 
-                  }}>
+
+                }}>
                   Solana
-              </Text>
+                </Text>
               </View>
-              
-              <View style={{flexDirection :'row'}}>
-              <Text
+
+              <View style={{ flexDirection: 'row' }}>
+                <Text
                   variant="bodyLarge"
                   style={{
-                    fontWeight:'bold',
+                    fontWeight: 'bold',
                     fontSize: 22,
                     color: 'black',
-                  
+
 
                   }}
                 >
@@ -94,29 +130,29 @@ export function HomeScreen() {
 
             </TouchableOpacity>
             <TouchableOpacity style={styles.item}>
-              <View style={{flexDirection:'row' , alignItems:'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-              <Avatar.Image size={50} style={{backgroundColor :'white'}} source={require('../../images/logoEth.png')} />
-              <Text style={{
-                    fontWeight:'bold',
-                    fontSize: 22,
-                    color: 'black',
-                    marginStart:10
-                  
+                <Avatar.Image size={50} style={{ backgroundColor: 'white' }} source={require('../../images/logoEth.png')} />
+                <Text style={{
+                  fontWeight: 'bold',
+                  fontSize: 22,
+                  color: 'black',
+                  marginStart: 10
 
-                  }}>
-                Ethereum
-              </Text>
+
+                }}>
+                  Ethereum
+                </Text>
               </View>
-              
-              <View style={{flexDirection :'row'}}>
-              <Text
+
+              <View style={{ flexDirection: 'row' }}>
+                <Text
                   variant="bodyLarge"
                   style={{
-                    fontWeight:'bold',
+                    fontWeight: 'bold',
                     fontSize: 22,
                     color: 'black',
-                  
+
 
                   }}
                 >
@@ -140,29 +176,29 @@ export function HomeScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.item}>
-              <View style={{flexDirection:'row' , alignItems:'center'}}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-              <Avatar.Image size={50} style={{backgroundColor :'white'}} source={require('../../images/shiba-inu-shib-logo.png')} />
-              <Text style={{
-                    fontWeight:'bold',
-                    fontSize: 22,
-                    color: 'black',
-                    marginStart:10
-                  
+                <Avatar.Image size={50} style={{ backgroundColor: 'white' }} source={require('../../images/shiba-inu-shib-logo.png')} />
+                <Text style={{
+                  fontWeight: 'bold',
+                  fontSize: 22,
+                  color: 'black',
+                  marginStart: 10
 
-                  }}>
-                Shiba Inu
-              </Text>
+
+                }}>
+                  Shiba Inu
+                </Text>
               </View>
-              
-              <View style={{flexDirection :'row'}}>
-              <Text
+
+              <View style={{ flexDirection: 'row' }}>
+                <Text
                   variant="bodyLarge"
                   style={{
-                    fontWeight:'bold',
+                    fontWeight: 'bold',
                     fontSize: 22,
                     color: 'black',
-                  
+
 
                   }}
                 >
