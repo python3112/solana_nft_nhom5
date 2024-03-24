@@ -97,7 +97,7 @@ export default function Rewart({ navigation }: { navigation: any }) {
           {item.completed ? "Click to get SOL" : "Do this mission to get SOL"}
         </Text>
       </View>
-      {item.completed ? (
+      {/* {item.completed ? (
         <GetRewardButton
           address={selectedAccount.publicKey}
           amount={item.point}
@@ -111,7 +111,7 @@ export default function Rewart({ navigation }: { navigation: any }) {
         >
           SOL | {item.point}
         </Button>
-      )}
+      )} */}
     </TouchableOpacity>
   );
 
@@ -132,7 +132,7 @@ export default function Rewart({ navigation }: { navigation: any }) {
   );
 }
 // get reward
-function GetRewardButton({
+async function  GetRewardButton({
   address,
   amount,
   handleSuccess,
@@ -141,7 +141,7 @@ function GetRewardButton({
   amount: number;
   handleSuccess: () => void;
 }) {
-  const requestAirdrop = useRequestAirdrop({ address });
+   const requestAirdrop = useRequestAirdrop({ address });
   const [showAirdropModal, setShowAirdropModal] = useState(false);
 
   return (

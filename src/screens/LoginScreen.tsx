@@ -30,14 +30,15 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     const [password, setPassword] = useState('');
     const [data, setData] = useState<UserData[]>([])
     const [rememberPassword, setRememberPassword] = useState(false);
+    const [hidePass, sethidePass] = useState(true)
     // Chỉ định kiểu dữ liệu cho props navigation
     const { selectedAccount } = useAuthorization();
     const handlePress = () => {
-        navigation.navigate('HomeStack')
+        sethidePass(!hidePass);
     };
 
     useEffect(() => {
-        checkRememberPassword()
+        checkRememberPassword();
         downloadData();
 
     }, [])
@@ -57,7 +58,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         try {
             const response = await fetch(`${ipApi}users/`);
             const apiData = await response.json();
-            setData( apiData);
+            setData(apiData);
         } catch (error) {
             console.log(error);
         }
@@ -68,14 +69,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
     const handleLogin = async () => {
         if (username.trim() === '') {
-            ToastAndroid.show( "Vui lòng nhập đúng tài khoản", ToastAndroid.SHORT);
+            ToastAndroid.show("Vui lòng nhập đúng tài khoản", ToastAndroid.SHORT);
         } else if (password.trim() === '') {
-            ToastAndroid.show( "Vui lòng nhập mật khẩu" , ToastAndroid.SHORT);
+            ToastAndroid.show("Vui lòng nhập mật khẩu", ToastAndroid.SHORT);
         } else {
-            const check = await fetch(`${ipApi}users/userslogin` , {
+            const check = await fetch(`${ipApi}users/userslogin`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
-                body: JSON.stringify({ userName: username, userPass: password}),
+                body: JSON.stringify({ userName: username, userPass: password }),
             })
 
             if (check.ok) {
@@ -100,9 +101,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                     }
                 }
                 // await AsyncStorage.setItem('userID', check._id);
-                
+
             } else {
-                ToastAndroid.show( "Vui lòng nhập tài khoản" , ToastAndroid.SHORT);
+                ToastAndroid.show("Vui lòng nhập tài khoản", ToastAndroid.SHORT);
             }
         }
     };
@@ -117,14 +118,20 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 value={username}
                 onChangeText={(text) => setUsername(text)}
             />
-            <TextInput
-                secureTextEntry
-                variant='outlined'
-                label='Password'
-                style={styles.input}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-            />
+            <View style={styles.inputPass}>
+                <TextInput
+                    style={{ width: "100%" }}
+                    secureTextEntry={hidePass}
+                    variant='outlined'
+                    label='Password'
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                />
+                <TouchableOpacity onPress={() => handlePress()} style={styles.eyeIcon}>
+                    <MaterialCommunityIcon name={hidePass ? "eye" : "eye-off"} size={25} />
+                </TouchableOpacity>
+            </View>
+
             <View style={styles.checkboxContainer}>
                 <CheckBox
                     title='Remmember'
@@ -180,13 +187,29 @@ const styles = StyleSheet.create({
     logo: {
         width: 200,
         height: 200,
-        marginVertical: 50,
+        marginVertical: 40,
     },
     input: {
+
         width: '80%',
         height: 50,
         borderColor: 'gray',
         marginTop: 20,
+    },
+
+    inputPass: {
+        flexDirection: 'row',
+        width: '80%',
+        height: 50,
+        borderColor: 'gray',
+        marginTop: 20,
+
+    },
+    eyeIcon: {
+        marginTop:5,
+        position: 'absolute',
+        right: 10, // Điều chỉnh khoảng cách từ phía bên phải của TextInput
+        top: 10,
     },
     btnDN: {
         width: "80%",
