@@ -38,28 +38,6 @@ export function HomeScreen() {
   const { selectedAccount } = useAuthorization();
   const [ttuser, setUser] = useState<user>();
 
-
-
-  useEffect(() => {
-    const getUser = async () => {
-      const user = await AsyncStorage.getItem("user");
-      const check = await fetch(`${ipApi}users/getone/${user}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json", }, 
-    })
-    if(check.ok){
-      const last =  await check.json();
-      console.log(last)
-      setUser(last);
-    }else{return;}
-    
-
-    }
-    getUser();
-
-  }, [])
-
-
   return (
     <View style={styles.screenContainer}>
       {selectedAccount ? (
@@ -87,7 +65,7 @@ export function HomeScreen() {
             <TouchableOpacity style={styles.item}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                {/* <Avatar.Image size={50} source={{uri : ttuser.avata}} /> */}
+                <Avatar.Image size={50} source={require('../../images/logoSol.png')} />
                 <Text style={{
                   fontWeight: 'bold',
                   fontSize: 22,

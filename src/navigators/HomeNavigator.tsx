@@ -9,7 +9,9 @@ import Rewart from "../screens/Rewart";
 import { Image, TouchableOpacity, View  , Text } from 'react-native'
 import TransicionHitoryScreen from "../screens/TransicionHitoryScreen";
 import DeitalMission from "../screens/DeitalMission";
-
+import {useEffect , useState} from 'react'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const ipApi = "http://192.168.1.89:3000/";
 const Tab = createBottomTabNavigator();
 
 /**
@@ -19,13 +21,33 @@ const Tab = createBottomTabNavigator();
  * More info: https://reactnavigation.org/docs/bottom-tab-navigator/
  */
 export function HomeNavigator() {
+    const [first, setfirst] = useState([]);
+  useEffect(() => {
+      
+        const getUser = async () => {
+          const user = await AsyncStorage.getItem("user");
+          const check = await fetch(`${ipApi}api/users/${user}`, {
+            method: 'GET',
+            headers: { "Content-Type": "application/json", }, 
+        })
+        if(check.ok){
+          const last =  await check.json();
+          console.log(last.payload.data)
+          setfirst(last.payload.data);
+        }else{return;}
+        
+    
+        }
+      getUser()
+  }, [])
+  
   const theme = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
        tabBarShowLabel:false,
         tabBarStyle: { position: 'absolute', bottom: 15, left: 15, right: 15, height: 70  , elevation : 0 ,  borderRadius : 15 },
-        header: () => <TopBar />,
+        header: () => <TopBar url={first} />
         // tabBarIcon: ({ focused, color, size }) => {
         //   switch (route.name) {
         //     case "Home":

@@ -1,13 +1,15 @@
 /**
  * dev: ManhThai
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
   ToastAndroid,
   TouchableOpacity,
   View,
+  Platform,
+  Image
 } from "react-native";
 import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { useRequestAirdrop } from "../components/account/account-data-access";
@@ -15,42 +17,21 @@ import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
 import { AppModal } from "../components/ui/app-modal";
 
+
+
 // data
 const missions = [
   {
-    id: "1",
+    _id: "1",
     title: "Connect with the app ",
     point: 1,
     completed: true,
   },
-  {
-    id: "2",
-    title: "Set public key for account",
-    point: 5,
-    completed: true,
-  },
-  {
-    id: "3",
-    title: "Mission C",
-    point: 2.777,
-    completed: true,
-  },
-  {
-    id: "4",
-    title: "Mission D",
-    point: 2,
-    completed: false,
-  },
-  {
-    id: "5",
-    title: "Mission e",
-    point: 2,
-    completed: false,
-  },
+
 ];
 
 type Mission = {
-  id: string;
+  _id: string;
   title: string;
   point: number;
   completed: boolean;
@@ -58,21 +39,24 @@ type Mission = {
 
 export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
+  const [image, setImage] = useState(null);
 
   if (!selectedAccount) {
     return null;
   }
 
+
+
   const theme = useTheme();
   const [data, setData] = useState(missions);
 
-  const getReward = (item :  Mission) => {
+  const getReward = (item: Mission) => {
     console.log(`get reward: ${item.point}`);
-    const newData = data.filter((mission) => mission.id !== item.id);
+    const newData = data.filter((mission) => mission._id !== item._id);
     setData(newData);
   };
 
-  const doMission = (item :  Mission) => {
+  const doMission = (item: Mission) => {
     console.log(`do mission: ${item.title}`);
     ToastAndroid.show(
       "Complete the mission to receive rewards",
@@ -81,8 +65,10 @@ export default function Rewart({ navigation }: { navigation: any }) {
   };
 
 
-  const renderItem = ({ item }:  {item : Mission}) => (
-    <TouchableOpacity style={styles.item}   onPress={() => navigation.navigate("deital", { item })}>
+
+
+  const renderItem = ({ item }: { item: Mission }) => (
+    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate("deital", { item })}>
       <View>
         <Text variant="titleMedium">{item.title}</Text>
         <Text
@@ -97,42 +83,31 @@ export default function Rewart({ navigation }: { navigation: any }) {
           {item.completed ? "Click to get SOL" : "Do this mission to get SOL"}
         </Text>
       </View>
-      {/* {item.completed ? (
-        <GetRewardButton
-          address={selectedAccount.publicKey}
-          amount={item.point}
-          handleSuccess={() => getReward(item)}
-        />
-      ) : (
-        <Button
-          mode="elevated"
-          onPress={() => doMission(item)}
-          icon="progress-alert"
-        >
-          SOL | {item.point}
-        </Button>
-      )} */}
+
     </TouchableOpacity>
   );
 
   return (
 
-    
+
 
     <View style={styles.screenContainer}>
-      
-      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Mission and reward</Text>
+
+
+      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
 
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={({ id }) => id}
+        keyExtractor={({ _id }) => _id}
       />
+
+
     </View>
   );
 }
 // get reward
-async function  GetRewardButton({
+async function GetRewardButton({
   address,
   amount,
   handleSuccess,
@@ -141,12 +116,12 @@ async function  GetRewardButton({
   amount: number;
   handleSuccess: () => void;
 }) {
-   const requestAirdrop = useRequestAirdrop({ address });
+  const requestAirdrop = useRequestAirdrop({ address });
   const [showAirdropModal, setShowAirdropModal] = useState(false);
 
   return (
     <>
-    {}
+      { }
       <AppModal
         title="Get Reward"
         hide={() => setShowAirdropModal(false)}

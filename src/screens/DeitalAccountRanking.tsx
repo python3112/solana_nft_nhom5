@@ -10,12 +10,12 @@ export default function DeitalAccountRanking({ route, navigation }: { route: any
         <View style={{flexDirection: 'row', marginTop: 15}}>
           <Avatar.Image
             source={{
-              uri: item.avata
+              uri: item.avatar
             }}
             size={80} />
           <View style={{marginLeft: 20}}>
-            <Title style={styles.title}>{item.fullName}</Title>
-            <Caption style={styles.caption}>@{item.userName}</Caption>
+            <Title style={styles.title}>{item.fullname}</Title>
+            <Caption style={styles.caption}>@{item.username}</Caption>
           </View>
         </View>
       </View>

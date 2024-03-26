@@ -19,8 +19,8 @@ import { TextInput } from "@react-native-material/core";
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 interface UserData {
-    userName: string;
-    userPass: string;
+    username: string;
+    userpass: string;
     _id: string;
 }
 
@@ -39,7 +39,6 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
     useEffect(() => {
         checkRememberPassword();
-        downloadData();
 
     }, [])
 
@@ -54,15 +53,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         }
     };
 
-    const downloadData = async () => {
-        try {
-            const response = await fetch(`${ipApi}users/`);
-            const apiData = await response.json();
-            setData(apiData);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+
 
 
 
@@ -73,36 +64,25 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         } else if (password.trim() === '') {
             ToastAndroid.show("Vui lòng nhập mật khẩu", ToastAndroid.SHORT);
         } else {
-            const check = await fetch(`${ipApi}users/userslogin`, {
+            const check = await fetch(`${ipApi}api/auth/login`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
-                body: JSON.stringify({ userName: username, userPass: password }),
+                body: JSON.stringify({ username: username, password: password }),
             })
 
             if (check.ok) {
-                const user = await check.json()
-                console.log(user._id);
+                const responseData = await check.json();
+                console.log(responseData.payload.data._id);
                 navigation.navigate('HomeStack');
-                await AsyncStorage.setItem("user" , user._id);
+                await AsyncStorage.setItem("user", responseData.payload.data._id);
                 if (rememberPassword) {
-                    try {
-                        // Lưu trạng thái nhớ mật khẩu và thông tin tài khoản, mật khẩu vào AsyncStorage
-                        await AsyncStorage.setItem('rememberPassword', 'true');
-                        await AsyncStorage.setItem('username', username);
-                        await AsyncStorage.setItem('password', password);
-                    } catch (error) {
-                        console.log(error);
-                    }
+
                 } else {
-                    try {
-                        // Xóa trạng thái nhớ mật khẩu và thông tin tài khoản, mật khẩu khỏi AsyncStorage
-                        await AsyncStorage.removeItem('rememberPassword');
-                        await AsyncStorage.removeItem('username');
-                        await AsyncStorage.removeItem('password');
-                    } catch (error) {
-                        console.log(error);
-                    }
+                    setUsername("")
+                    setPassword("")
                 }
+
+
                 // await AsyncStorage.setItem('userID', check._id);
 
             } else {
@@ -209,7 +189,7 @@ const styles = StyleSheet.create({
 
     },
     eyeIcon: {
-        marginTop:5,
+        marginTop: 5,
         position: 'absolute',
         right: 10, // Điều chỉnh khoảng cách từ phía bên phải của TextInput
         top: 10,

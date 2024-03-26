@@ -3,7 +3,7 @@ import { Appbar, useTheme , Avatar } from "react-native-paper";
 import { TopBarWalletButton, TopBarWalletMenu } from "./top-bar-ui";
 import { useNavigation } from "@react-navigation/core";
 
-export function TopBar() {
+export function TopBar({ url }: {  url: any }) {
   const navigation = useNavigation();
   const theme = useTheme();
 
@@ -14,7 +14,7 @@ export function TopBar() {
       </View>
       
        <TouchableOpacity style={{ height :'100%' , alignContent:'center' ,marginTop:20 , marginEnd : 20 }} onPress={() => {navigation.navigate("Profiles")}}>
-        <Avatar.Image  style={{alignSelf:'center'}} size={40}  source={require('../../../images/OIP.jpg')}/>
+        <Avatar.Image  style={{alignSelf:'center'}} size={40}  source={{ uri : url.avatar}}/>
        </TouchableOpacity>
     </Appbar.Header>
   );
