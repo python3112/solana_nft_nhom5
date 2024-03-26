@@ -1,43 +1,65 @@
-import {
-    View,
-    StyleSheet,
-    SafeAreaView,
-    TouchableOpacity,
-    Image,
-    Text
-} from "react-native";
+import React, { useState } from 'react';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Image, Text, Alert, ToastAndroid } from 'react-native';
+import { TextInput } from '@react-native-material/core';
 
-import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import { SignInFeature } from "../components/sign-in/sign-in-feature";
-import { useAuthorization } from "../utils/useAuthorization";
-import React, { useEffect, useState } from "react";
-import { TextInput } from "@react-native-material/core";
-import { CheckBox } from 'react-native-elements';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function SignUpScreen({ navigation }: { navigation: any }) {
-   
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [fullname, setFullname] = useState('');
-    const [email, setEmail] = useState('');
-    const [birthDay, setBirthday] = useState('');
     const [rePassword, setRepassword] = useState('');
-  
-    // Chỉ định kiểu dữ liệu cho props navigation
-    const { selectedAccount } = useAuthorization();
-    const handlePress = () => {
-        navigation.navigate('HomeStack')
+
+    const handleSignup = async () => {
+        if (!username || !password || !fullname || !rePassword) {
+            Alert.alert('Thông tin không đầy đủ', 'Vui lòng điền đầy đủ thông tin');
+            return;
+        }
+
+        if (username.length < 6) {
+            Alert.alert('Tên', 'Tên phải nhiều hơn 6 ký tự');
+            return;
+        }
+
+        if (password.length < 8) {
+            Alert.alert('Mật khẩu quá ngắn', 'Mật khẩu phải nhiều hơn 8 ký tự');
+            return;
+        }
+
+        if (password !== rePassword) {
+            Alert.alert('Mật khẩu không trùng khớp', 'Vui lòng xác định lại mật khẩu');
+            return;
+        }
+
+        
+
+        try {
+            const response = await fetch('http://192.168.1.8:3000/api/auth/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password, fullname }),
+            });
+
+            if (response.ok) {
+                Alert.alert('Thành công', 'Người dùng đăng ký thành công');
+                // Handle navigation or other actions upon successful signup
+            } else {
+                const responseData = await response.json();
+                Alert.alert('Lỗi', responseData.error || 'Có gì đó sai');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Lỗi', 'Có gì đó sai');
+        }
     };
 
- 
     return (
         <SafeAreaView style={styles.container}>
-        <Image style={styles.logo} source={require('../../images/logo.png')} />
-              
+            <Image style={styles.logo} source={require('../../images/logo.png')} />
             <TextInput
                 color='#57abff'
                 variant='outlined'
-                label='Tài khoản'
+                label='Username'
                 style={styles.input}
                 value={username}
                 onChangeText={(text) => setUsername(text)}
@@ -45,52 +67,41 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
             <TextInput
                 color='#57abff'
                 variant='outlined'
-                label='Họ và tên'
+                label='Full Name'
                 style={styles.input}
                 value={fullname}
                 onChangeText={(text) => setFullname(text)}
             />
-          
-          
             <TextInput
                 color='#57abff'
                 secureTextEntry
                 variant='outlined'
-                label='Mật khẩu'
+                label='Password'
                 style={styles.input}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
             />
-           <TextInput
-              color='#57abff'
+            <TextInput
+                color='#57abff'
                 secureTextEntry
                 variant='outlined'
-                label='Nhập lại mật khẩu'
+                label='Confirm Password'
                 style={styles.input}
                 value={rePassword}
                 onChangeText={(text) => setRepassword(text)}
             />
-           <TouchableOpacity onPress={() =>{}} style={styles.btnDK}>
-                        <Text style={styles.btnText}>Register</Text>
-                    </TouchableOpacity>
-            </SafeAreaView>
+            <TouchableOpacity onPress={handleSignup} style={styles.btnDK}>
+                <Text style={styles.btnText}>Register</Text>
+            </TouchableOpacity>
+        </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F0FFFF',
         alignItems: 'center'
-    },
-    checkboxContainer: {
-        flexDirection: 'row',
-        alignSelf: 'flex-start',
-        marginStart: 23,        
-        marginTop:15,
-    },
-    checkbox: {
-        backgroundColor: 'transparent',
-        borderWidth: 0
     },
     logo: {
         width: 200,
@@ -101,25 +112,10 @@ const styles = StyleSheet.create({
         width: '80%',
         height: 50,
         borderColor: 'gray',
-        marginTop:20,
-    },
-    btnDN: {
-        width: "80%",
-        height: 50,
-        borderRadius: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#57abff',
-        marginBottom: 20,
-        marginTop: 30,
-    },
-    btnText: {
-        fontWeight: 'bold',
-        color: '#57abff',
-        fontSize: 17
+        marginTop: 20,
     },
     btnDK: {
-        width: "80%",
+        width: '80%',
         height: 50,
         borderRadius: 5,
         borderColor: '#57abff',
@@ -127,44 +123,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
-        marginTop:30,
+        marginTop: 30,
         marginBottom: 20
     },
-    viewDNK: {
-        flex: 1,
-        width: '80%',
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        paddingHorizontal: 20,
+    btnText: {
+        fontWeight: 'bold',
+        color: '#57abff',
+        fontSize: 17
     },
-    btnDNK: {
-        width: 50,
-        height: 50,
-        backgroundColor: 'white',
-        padding: 7,
-        borderRadius: 30,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    icon: {
-        width: 40,
-        height: 40
-    },
-    textDNK: {
-        marginTop: 20,
-        marginBottom: 10,
-        flexDirection: 'row',
-        width: '80%',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    divider: {
-        width: '21%',
-        height: 1,
-        backgroundColor: 'gray'
-    },
-    orText: {
-        fontSize: 16
-    }
-
 });
