@@ -24,7 +24,7 @@ interface UserData {
     _id: string;
 }
 
-const ipApi = "http://192.168.1.89:3000/";
+const ipApi = "http://10.24.22.35:3000/api/";
 export default function LoginScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -73,7 +73,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         } else if (password.trim() === '') {
             ToastAndroid.show("Vui lòng nhập mật khẩu", ToastAndroid.SHORT);
         } else {
-            const check = await fetch(`${ipApi}users/userslogin`, {
+            const check = await fetch(`${ipApi}auth/login`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ userName: username, userPass: password }),

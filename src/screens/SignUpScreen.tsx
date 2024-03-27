@@ -32,7 +32,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         
 
         try {
-            const response = await fetch('http://192.168.1.8:3000/api/auth/signup', {
+            const response = await fetch('http://10.24.22.35:3000/api/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
