@@ -18,13 +18,13 @@ import React, { useEffect, useState } from "react";
 import { TextInput } from "@react-native-material/core";
 import { CheckBox } from 'react-native-elements';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import configApi  from '../navigators/config';
 interface UserData {
     username: string;
     userpass: string;
     _id: string;
 }
 
-const ipApi = "http://192.168.1.89:3000/";
 export default function LoginScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -39,6 +39,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
     useEffect(() => {
         checkRememberPassword();
+       
 
     }, [])
 
@@ -59,12 +60,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
 
     const handleLogin = async () => {
+        
         if (username.trim() === '') {
             ToastAndroid.show("Vui lòng nhập đúng tài khoản", ToastAndroid.SHORT);
         } else if (password.trim() === '') {
             ToastAndroid.show("Vui lòng nhập mật khẩu", ToastAndroid.SHORT);
         } else {
-            const check = await fetch(`${ipApi}api/auth/login`, {
+            const check = await fetch(`${configApi()}api/auth/login`, {
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ username: username, password: password }),
@@ -72,9 +74,10 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
             if (check.ok) {
                 const responseData = await check.json();
+                await AsyncStorage.setItem("user", responseData.payload.data._id);
                 console.log(responseData.payload.data._id);
                 navigation.navigate('HomeStack');
-                await AsyncStorage.setItem("user", responseData.payload.data._id);
+                
                 if (rememberPassword) {
 
                 } else {

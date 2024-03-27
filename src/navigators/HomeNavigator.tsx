@@ -21,25 +21,7 @@ const Tab = createBottomTabNavigator();
  * More info: https://reactnavigation.org/docs/bottom-tab-navigator/
  */
 export function HomeNavigator() {
-    const [first, setfirst] = useState([]);
-  useEffect(() => {
-      
-        const getUser = async () => {
-          const user = await AsyncStorage.getItem("user");
-          const check = await fetch(`${ipApi}api/users/${user}`, {
-            method: 'GET',
-            headers: { "Content-Type": "application/json", }, 
-        })
-        if(check.ok){
-          const last =  await check.json();
-          console.log(last.payload.data)
-          setfirst(last.payload.data);
-        }else{return;}
-        
-    
-        }
-      getUser()
-  }, [])
+ 
   
   const theme = useTheme();
   return (
@@ -47,7 +29,7 @@ export function HomeNavigator() {
       screenOptions={({ route }) => ({
        tabBarShowLabel:false,
         tabBarStyle: { position: 'absolute', bottom: 15, left: 15, right: 15, height: 70  , elevation : 0 ,  borderRadius : 15 },
-        header: () => <TopBar url={first} />
+        header: () => <TopBar />
         // tabBarIcon: ({ focused, color, size }) => {
         //   switch (route.name) {
         //     case "Home":

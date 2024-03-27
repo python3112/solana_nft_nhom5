@@ -16,8 +16,8 @@ import { useRequestAirdrop } from "../components/account/account-data-access";
 import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
 import { AppModal } from "../components/ui/app-modal";
-
-
+import configApi  from '../navigators/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // data
 const missions = [
@@ -33,58 +33,57 @@ const missions = [
 type Mission = {
   _id: string;
   title: string;
+  require: string;
   point: number;
-  completed: boolean;
+  image:string;
+  description:string;
 };
 
 export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
-  const [image, setImage] = useState(null);
-
-  if (!selectedAccount) {
-    return null;
-  }
-
-
-
-  const theme = useTheme();
   const [data, setData] = useState(missions);
+  useEffect(() => {
 
-  const getReward = (item: Mission) => {
-    console.log(`get reward: ${item.point}`);
-    const newData = data.filter((mission) => mission._id !== item._id);
-    setData(newData);
-  };
+   const getMiss = async () => {
+      const value = await AsyncStorage.getItem('user');
+      const checkApi = await fetch(`${configApi()}api/missions/${value}`, {
+        method: 'GET',
+        headers: { "Content-Type": "application/json", },
+       
+       
+    })
+    if(checkApi.ok){
+        
+    }
 
-  const doMission = (item: Mission) => {
-    console.log(`do mission: ${item.title}`);
-    ToastAndroid.show(
-      "Complete the mission to receive rewards",
-      ToastAndroid.SHORT
-    );
-  };
+    }
 
-
+    getMiss()
+  }, [])
 
 
   const renderItem = ({ item }: { item: Mission }) => (
-    <TouchableOpacity style={styles.item} onPress={() => navigation.navigate("deital", { item })}>
-      <View>
+    <View style={styles.item} >
+      <TouchableOpacity onPress={() => navigation.navigate("deital", { item })}>
         <Text variant="titleMedium">{item.title}</Text>
         <Text
           variant="labelSmall"
-          style={{
-            fontStyle: "italic",
-            color: item.completed
-              ? theme.colors.primary
-              : theme.colors.secondary,
-          }}
         >
-          {item.completed ? "Click to get SOL" : "Do this mission to get SOL"}
+          Click To Deital
         </Text>
-      </View>
 
-    </TouchableOpacity>
+
+
+      </TouchableOpacity>
+      {/* <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, padding: 10, backgroundColor: "gray" }}>
+        <Text style={{ color: "white", fontWeight: "bold" }}>
+          Get Mission
+        </Text>
+      </TouchableOpacity> */}
+      <Button mode="outlined">
+        Get Mission
+      </Button>
+    </View>
   );
 
   return (
@@ -94,13 +93,13 @@ export default function Rewart({ navigation }: { navigation: any }) {
     <View style={styles.screenContainer}>
 
 
-      {image && <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
 
-      <FlatList
+
+      {/* <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={({ _id }) => _id}
-      />
+      /> */}
 
 
     </View>
@@ -163,9 +162,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
     margin: 8,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#fcff",
     elevation: 4,
   },
 });

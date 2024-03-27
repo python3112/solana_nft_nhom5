@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, TouchableOpacity, Image, Text, Alert, ToastAndroid } from 'react-native';
 import { TextInput } from '@react-native-material/core';
-
+import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
+const ipApi = "http://192.168.1.89:3000/";
 export default function SignUpScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [fullname, setFullname] = useState('');
     const [rePassword, setRepassword] = useState('');
+    const [hidePass, sethidePass] = useState(true)
+
+    const handlePress = () => {
+        sethidePass(!hidePass);
+    };
 
     const handleSignup = async () => {
         if (!username || !password || !fullname || !rePassword) {
@@ -32,7 +38,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         
 
         try {
-            const response = await fetch('http://192.168.1.8:3000/api/auth/signup', {
+            const response = await fetch(`${ipApi}api/auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,6 +48,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
 
             if (response.ok) {
                 Alert.alert('Thành công', 'Người dùng đăng ký thành công');
+                navigation.goBack();
                 // Handle navigation or other actions upon successful signup
             } else {
                 const responseData = await response.json();
@@ -72,24 +79,32 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
                 value={fullname}
                 onChangeText={(text) => setFullname(text)}
             />
-            <TextInput
-                color='#57abff'
-                secureTextEntry
-                variant='outlined'
-                label='Password'
-                style={styles.input}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-            />
-            <TextInput
-                color='#57abff'
-                secureTextEntry
-                variant='outlined'
-                label='Confirm Password'
-                style={styles.input}
-                value={rePassword}
-                onChangeText={(text) => setRepassword(text)}
-            />
+            <View style={styles.inputPass}>
+                <TextInput
+                    style={{ width: "100%" }}
+                    secureTextEntry={hidePass}
+                    variant='outlined'
+                    label='Password'
+                    value={password}
+                    onChangeText={(text) => setPassword(text)}
+                />
+                <TouchableOpacity onPress={() => handlePress()} style={styles.eyeIcon}>
+                    <MaterialCommunityIcon name={hidePass ? "eye" : "eye-off"} size={25} />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.inputPass}>
+                <TextInput
+                    style={{ width: "100%" }}
+                    secureTextEntry={hidePass}
+                    variant='outlined'
+                    label='Password'
+                    value={rePassword}
+                    onChangeText={(text) => setRepassword(text)}
+                />
+                <TouchableOpacity onPress={() => handlePress()} style={styles.eyeIcon}>
+                    <MaterialCommunityIcon name={hidePass ? "eye" : "eye-off"} size={25} />
+                </TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={handleSignup} style={styles.btnDK}>
                 <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
@@ -126,9 +141,23 @@ const styles = StyleSheet.create({
         marginTop: 30,
         marginBottom: 20
     },
+    inputPass: {
+        flexDirection: 'row',
+        width: '80%',
+        height: 50,
+        borderColor: 'gray',
+        marginTop: 20,
+
+    },
     btnText: {
         fontWeight: 'bold',
         color: '#57abff',
         fontSize: 17
+    },
+    eyeIcon: {
+        marginTop: 5,
+        position: 'absolute',
+        right: 10, // Điều chỉnh khoảng cách từ phía bên phải của TextInput
+        top: 10,
     },
 });
