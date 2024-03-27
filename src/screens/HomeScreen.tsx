@@ -20,8 +20,10 @@ import {
   DataTable,
   TextInput,
 } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-const ipApi = "http://192.168.1.89:3000/";
+import configApi  from '../navigators/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 interface user {
   _id: number;
   avata: string;
@@ -37,6 +39,34 @@ interface user {
 export function HomeScreen() {
   const { selectedAccount } = useAuthorization();
   const [ttuser, setUser] = useState<user>();
+
+
+  useEffect(() => {
+    if(selectedAccount){
+      const connectWallet = async() =>{
+        try {
+          const value = await AsyncStorage.getItem('user');
+          const checkApi = await fetch(`${configApi()}api/users/${value}/connect-to-wallet`, {
+            method: 'PATCH',
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({public_key : selectedAccount.publicKey }),
+           
+        })
+          if(checkApi.ok){
+            console.log('ok')
+          }
+        } catch (error) {
+            console.log(error)
+        }
+       
+      }
+      connectWallet();
+    }else{
+      return ;
+    }
+    
+  }, [selectedAccount])
+  
 
   return (
     <View style={styles.screenContainer}>

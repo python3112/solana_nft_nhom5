@@ -2,6 +2,7 @@ import React, { useState , useEffect } from 'react';
 import { View, SafeAreaView, FlatList, TouchableOpacity, StyleSheet , Image } from 'react-native';
 import { Button, Icon, Text, useTheme, Avatar } from "react-native-paper";
 const ipApi = "http://192.168.1.89:3000/";
+import configApi  from '../navigators/config';
 interface ItemProps {
   _id: number;
   avatar: string;
@@ -21,7 +22,7 @@ export default function Rewart({ navigation }: { navigation: any }) {
   useEffect( () => {
     const downloadData = async () => {
       try {
-        const response = await fetch(`${ipApi}api/users/top-10-points`);
+        const response = await fetch(`${configApi()}api/users/top-10-points`);
         const apiData = await response.json();
         console.log(apiData.payload.data)
         setlistdata(apiData.payload.data);
