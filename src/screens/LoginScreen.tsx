@@ -26,6 +26,7 @@ interface UserData {
     _id: string;
 }
 
+
 export default function LoginScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -67,7 +68,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         } else if (password.trim() === '') {
             ToastAndroid.show("Vui lòng nhập mật khẩu", ToastAndroid.SHORT);
         } else {
+
             const check = await fetch(`${configApi()}api/auth/login`, {
+
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ username: username, password: password }),
