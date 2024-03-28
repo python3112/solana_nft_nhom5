@@ -1,138 +1,112 @@
 /**
  * dev: ManhThai
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
   ToastAndroid,
   TouchableOpacity,
   View,
+  Platform,
+  Image
 } from "react-native";
 import { Button, Icon, Text, useTheme } from "react-native-paper";
 import { useRequestAirdrop } from "../components/account/account-data-access";
 import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
 import { AppModal } from "../components/ui/app-modal";
+import configApi  from '../navigators/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // data
 const missions = [
   {
-    id: "1",
+    _id: "1",
     title: "Connect with the app ",
     point: 1,
     completed: true,
   },
-  {
-    id: "2",
-    title: "Set public key for account",
-    point: 5,
-    completed: true,
-  },
-  {
-    id: "3",
-    title: "Mission C",
-    point: 2.777,
-    completed: true,
-  },
-  {
-    id: "4",
-    title: "Mission D",
-    point: 2,
-    completed: false,
-  },
-  {
-    id: "5",
-    title: "Mission e",
-    point: 2,
-    completed: false,
-  },
+
 ];
 
 type Mission = {
-  id: string;
+  _id: string;
   title: string;
+  require: string;
   point: number;
-  completed: boolean;
+  image:string;
+  description:string;
 };
 
 export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
-
-  if (!selectedAccount) {
-    return null;
-  }
-
-  const theme = useTheme();
   const [data, setData] = useState(missions);
+  useEffect(() => {
 
-  const getReward = (item :  Mission) => {
-    console.log(`get reward: ${item.point}`);
-    const newData = data.filter((mission) => mission.id !== item.id);
-    setData(newData);
-  };
+   const getMiss = async () => {
+      const value = await AsyncStorage.getItem('user');
+      const checkApi = await fetch(`${configApi()}api/missions/${value}`, {
+        method: 'GET',
+        headers: { "Content-Type": "application/json", },
+       
+       
+    })
+    if(checkApi.ok){
+        
+    }
 
-  const doMission = (item :  Mission) => {
-    console.log(`do mission: ${item.title}`);
-    ToastAndroid.show(
-      "Complete the mission to receive rewards",
-      ToastAndroid.SHORT
-    );
-  };
+    }
+
+    getMiss()
+  }, [])
 
 
-  const renderItem = ({ item }:  {item : Mission}) => (
-    <TouchableOpacity style={styles.item}   onPress={() => navigation.navigate("deital", { item })}>
-      <View>
+  const renderItem = ({ item }: { item: Mission }) => (
+    <View style={styles.item} >
+      <TouchableOpacity onPress={() => navigation.navigate("deital", { item })}>
         <Text variant="titleMedium">{item.title}</Text>
         <Text
           variant="labelSmall"
-          style={{
-            fontStyle: "italic",
-            color: item.completed
-              ? theme.colors.primary
-              : theme.colors.secondary,
-          }}
         >
-          {item.completed ? "Click to get SOL" : "Do this mission to get SOL"}
+          Click To Deital
         </Text>
-      </View>
-      {/* {item.completed ? (
-        <GetRewardButton
-          address={selectedAccount.publicKey}
-          amount={item.point}
-          handleSuccess={() => getReward(item)}
-        />
-      ) : (
-        <Button
-          mode="elevated"
-          onPress={() => doMission(item)}
-          icon="progress-alert"
-        >
-          SOL | {item.point}
-        </Button>
-      )} */}
-    </TouchableOpacity>
+
+
+
+      </TouchableOpacity>
+      {/* <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, padding: 10, backgroundColor: "gray" }}>
+        <Text style={{ color: "white", fontWeight: "bold" }}>
+          Get Mission
+        </Text>
+      </TouchableOpacity> */}
+      <Button mode="outlined">
+        Get Mission
+      </Button>
+    </View>
   );
 
   return (
 
-    
+
 
     <View style={styles.screenContainer}>
-      
-      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Mission and reward</Text>
 
-      <FlatList
+
+
+
+      {/* <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={({ id }) => id}
-      />
+        keyExtractor={({ _id }) => _id}
+      /> */}
+
+
     </View>
   );
 }
 // get reward
-async function  GetRewardButton({
+async function GetRewardButton({
   address,
   amount,
   handleSuccess,
@@ -141,12 +115,12 @@ async function  GetRewardButton({
   amount: number;
   handleSuccess: () => void;
 }) {
-   const requestAirdrop = useRequestAirdrop({ address });
+  const requestAirdrop = useRequestAirdrop({ address });
   const [showAirdropModal, setShowAirdropModal] = useState(false);
 
   return (
     <>
-    {}
+      { }
       <AppModal
         title="Get Reward"
         hide={() => setShowAirdropModal(false)}
@@ -188,9 +162,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
+    paddingTop: 20,
+    paddingBottom: 20,
     margin: 8,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#fcff",
     elevation: 4,
   },
 });
