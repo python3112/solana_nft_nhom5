@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import configApi from '../navigators/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProgressBar, MD3Colors } from 'react-native-paper';
+import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 interface MissionDetailProps {
     missionData: {
         _id: string;
@@ -38,7 +39,7 @@ export default function DeitalMission({ route, navigation }: { route: any; navig
                 const response = await checkApi.json();
                 // Await here to get the JSON data
                 setFirst(response)
-               
+
             } catch (error) {
                 console.log(error)
             }
@@ -55,84 +56,77 @@ export default function DeitalMission({ route, navigation }: { route: any; navig
 
     return (
         <View style={styles.screenContainer}>
-               {
-                first ?  (
-                    <View style={{flex :  1 , flexDirection : "column"}}>
-                        <View style={{width :  '100%' , height : '30%'}}>
-                            <Text>
-                                Title :  {first.id_mission.title}
-
-                            </Text>
-                            <Text>
-                            description :  {first.id_mission.description}
-                                
-                            </Text>
+            {
+                first ? (
+                    <View style={styles.container}>
+                    <Image style={styles.image} source={{ uri: first.id_mission.image }} />
+                    <View style={styles.detailsContainer}>
+                        <View style={styles.titleContainer}>
+                            <Text style={styles.title}>{first.id_mission.title}</Text>
+                            <Text style={styles.point}>SOL: {first.id_mission.point}</Text>
                         </View>
-                        <Image style={{
-                            width : '100%', 
-                            height:  '30%',
-                            borderRadius:10
-                        }} source={{uri :  first.id_mission.image}}>
-
-                        </Image>
+                        <Text style={styles.description}>{first.id_mission.description}</Text>
                     </View>
+                </View>
                 ) : (
                     <ProgressBar progress={0.5} color={MD3Colors.error50} />
                 )
-               }
+            }
 
-            </View>
+        </View>
 
 
-      
+
 
     );
 }
 
 const styles = StyleSheet.create({
     screenContainer: {
-        flexDirection: 'column',
         flex: 1,
         padding: 16,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    item: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 16,
-        margin: 8,
-        borderRadius: 16,
-        backgroundColor: "#fff",
+    container: {
+        flex: 1,
+        width: '100%',
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
         elevation: 4,
+        overflow: 'hidden',
     },
     image: {
-        width: 200,
+        width: '100%',
         height: 200,
-        marginBottom: 20,
-        borderRadius: 10,
+        resizeMode: 'cover',
     },
-    content: {
+    detailsContainer: {
+        padding: 16,
+    },
+    titleContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
+        marginBottom: 8,
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    description: {
-        fontSize: 16,
-        marginBottom: 10,
-    },
-    require: {
-        fontSize: 16,
-        marginBottom: 10,
     },
     point: {
-        fontSize: 16,
-        marginBottom: 10,
+        fontSize: 20,
+        color: '#696969',
     },
-    status: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    description: {
+        fontSize: 18,
+        color: '#696969',
+        marginBottom: 16,
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
 });
