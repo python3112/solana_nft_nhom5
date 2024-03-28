@@ -9,65 +9,96 @@ import {
   TouchableOpacity,
   View,
   Platform,
-  Image
+  Image,
+  Modal
+
 } from "react-native";
-import { Button, Icon, Text, useTheme } from "react-native-paper";
+import { Button, Icon, Text, Title, useTheme } from "react-native-paper";
 import { useRequestAirdrop } from "../components/account/account-data-access";
 import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
 import { AppModal } from "../components/ui/app-modal";
-import configApi  from '../navigators/config';
+import configApi from '../navigators/config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 
-// data
-const missions = [
-  {
-    _id: "1",
-    title: "Connect with the app ",
-    point: 1,
-    completed: true,
-  },
 
-];
-
-type Mission = {
-  _id: string;
-  title: string;
-  require: string;
-  point: number;
-  image:string;
-  description:string;
-};
 
 export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
-  const [data, setData] = useState(missions);
+  const [data, setData] = useState();
+  const [reset, setreset] = useState(true);
+  const [modalDoing, setmodalDoing] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
+
   useEffect(() => {
+    if (reset) {
+      const getMiss = async () => {
+        try {
+          const value = await AsyncStorage.getItem('user');
+          const checkApi = await fetch(`${configApi()}api/missions?id_user=${value}`)
 
-   const getMiss = async () => {
-      const value = await AsyncStorage.getItem('user');
-      const checkApi = await fetch(`${configApi()}api/missions/${value}`, {
-        method: 'GET',
+          const response = await checkApi.json();
+          // Await here to get the JSON data
+
+          console.log(response.payload.nhiemVu)
+
+          setData(response.payload.nhiemVu)
+        } catch (error) {
+          console.log(error)
+        }
+
+      }
+      getMiss()
+      setreset(false);
+    }
+
+  }, [reset])
+
+
+  const nextStatus = async (id: string) => {
+    try {
+
+      const checkApi = await fetch(`${configApi()}api/missions/${id}/next-status`, {
+        method: 'PATCH',
         headers: { "Content-Type": "application/json", },
-       
-       
-    })
-    if(checkApi.ok){
-        
+
+
+      })
+      if (checkApi.ok) {
+        setreset(true);
+      }
+    } catch (error) {
+      console.log(error)
     }
 
-    }
 
-    getMiss()
-  }, [])
+  }
 
 
-  const renderItem = ({ item }: { item: Mission }) => (
+  const btnDoing = ({id}) => {
+    setSelectedItemId(id);
+    setmodalDoing(true);
+  }
+
+  const closeModal = () => {
+    setmodalDoing(false);
+    setSelectedItemId(null);
+  }
+
+
+
+
+  const renderItem = ({ item }) => (
+
     <View style={styles.item} >
-      <TouchableOpacity onPress={() => navigation.navigate("deital", { item })}>
-        <Text variant="titleMedium">{item.title}</Text>
+
+
+      <TouchableOpacity style={{ width: '65%', height: '100%' }} onPress={() => navigation.navigate("deital", { item:  item._id })}>
+        <Text variant="titleMedium">{item.id_mission.title}</Text>
         <Text
-          variant="labelSmall"
+
+          style={{ marginTop: 10, fontSize: 10 }}
         >
           Click To Deital
         </Text>
@@ -75,14 +106,19 @@ export default function Rewart({ navigation }: { navigation: any }) {
 
 
       </TouchableOpacity>
-      {/* <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, padding: 10, backgroundColor: "gray" }}>
-        <Text style={{ color: "white", fontWeight: "bold" }}>
-          Get Mission
-        </Text>
-      </TouchableOpacity> */}
-      <Button mode="outlined">
-        Get Mission
-      </Button>
+
+
+      {item.status === 0 ? (
+        <Button mode="outlined" onPress={() => nextStatus(item._id)}>Get Mission</Button>
+      ) : item.status === 1 ? (
+        <Button onPress={() => btnDoing(item._id)} mode="outlined" style={{ marginStart: 20 }} textColor="black">Doing...</Button>
+      ) : item.status === 2 ? (
+        <Button disabled>Admin Check</Button>
+      ) : item.status === 3 ? (
+        <Button mode="outlined" onPress={() => { }}>Get Sol</Button>
+      ) : null}
+
+
     </View>
   );
 
@@ -91,15 +127,26 @@ export default function Rewart({ navigation }: { navigation: any }) {
 
 
     <View style={styles.screenContainer}>
+       <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalDoing}
+        onRequestClose={closeModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
+
+          </View>
+        </View>
+      </Modal>
 
 
 
-
-      {/* <FlatList
+      <FlatList
         data={data}
         renderItem={renderItem}
         keyExtractor={({ _id }) => _id}
-      /> */}
+      />
 
 
     </View>
@@ -159,12 +206,12 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: "row",
-    justifyContent: "space-between",
+
     alignItems: "center",
-    padding: 16,
+    padding: 12,
     paddingTop: 20,
     paddingBottom: 20,
-    margin: 8,
+    marginTop: 10,
     borderRadius: 16,
     backgroundColor: "#fcff",
     elevation: 4,
