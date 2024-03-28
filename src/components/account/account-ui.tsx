@@ -29,9 +29,9 @@ export function AccountBalance({ address }: { address: PublicKey }) {
     <>
       <TouchableOpacity style={styles.accountBalance}>
         
-        <Image source={require('../../../images/logoSol.png')} style={{ width: 40, height: 40, marginEnd: 10 , alignSelf:'center'}}>
+        <Image source={require('../../../images/logoSol.png')} style={{ width: 30, height: 30, marginEnd: 10 , alignSelf:'center'}}>
         </Image>
-        <Text variant="headlineLarge" style={{ color: 'black', fontWeight: "bold", alignSelf: 'center' }}>
+        <Text variant="bodyMedium" style={{ color: 'black', fontWeight: "bold", alignSelf: 'center' }}>
           {query.data ? lamportsToSol(query.data) : "..."}
         </Text>
       </TouchableOpacity>
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 20,
     marginBottom: 20,
-    width: '40%',
+    width: '50%',
     height: 90,
     paddingStart: 10,
     paddingEnd: 10,

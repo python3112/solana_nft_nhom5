@@ -1,6 +1,6 @@
 
 const configApi = () => {
-    let api = "http://10.5.10.173:3000/";
+    let api = "http://192.168.1.89:3000/";
     return api;
 }
 
