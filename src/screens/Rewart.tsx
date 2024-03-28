@@ -13,7 +13,7 @@ import {
   Modal
 
 } from "react-native";
-import { Button, Icon, Text, Title, useTheme } from "react-native-paper";
+import { Button, Icon, Text, Title, useTheme, Avatar } from "react-native-paper";
 import { useRequestAirdrop } from "../components/account/account-data-access";
 import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
@@ -29,7 +29,7 @@ export default function Rewart({ navigation }: { navigation: any }) {
   const [data, setData] = useState();
   const [reset, setreset] = useState(true);
   const [modalDoing, setmodalDoing] = useState(false);
-  const [selectedItemId, setSelectedItemId] = useState(null);
+  const [selectedItemId, setSelectedItemId] = useState<string>();
 
   useEffect(() => {
     if (reset) {
@@ -62,8 +62,6 @@ export default function Rewart({ navigation }: { navigation: any }) {
       const checkApi = await fetch(`${configApi()}api/missions/${id}/next-status`, {
         method: 'PATCH',
         headers: { "Content-Type": "application/json", },
-
-
       })
       if (checkApi.ok) {
         setreset(true);
@@ -76,49 +74,70 @@ export default function Rewart({ navigation }: { navigation: any }) {
   }
 
 
-  const btnDoing = ({id}) => {
+  const btnDoing = ({ id }: { id: string }) => {
     setSelectedItemId(id);
-    setmodalDoing(true);
-  }
 
-  const closeModal = () => {
-    setmodalDoing(false);
-    setSelectedItemId(null);
   }
 
 
 
 
-  const renderItem = ({ item }) => (
-
-    <View style={styles.item} >
 
 
-      <TouchableOpacity style={{ width: '65%', height: '100%' }} onPress={() => navigation.navigate("deital", { item:  item._id })}>
-        <Text variant="titleMedium">{item.id_mission.title}</Text>
-        <Text
+  const renderItem = ({ item }: { item: any }) => (
+    <View >
+      {item.status > 0 ? (
+        <View style={styles.item} >
 
-          style={{ marginTop: 10, fontSize: 10 }}
-        >
-          Click To Deital
-        </Text>
+          <TouchableOpacity style={{ width: '65%', height: '100%', flexDirection: 'row', marginStart: 5, alignItems: 'center' }} onPress={() => navigation.navigate("deital", { item: item._id })}>
+            <Avatar.Image size={55} source={{ uri: item.id_mission.image }} style={{ marginStart: 5 }} />
+            <View style={{ marginStart: 10 }}>
+              <Text numberOfLines={1} style={{}} variant="titleMedium">{item.id_mission.title}</Text>
+              <Text style={{ marginTop: 10, fontSize: 10, marginStart: 5 }}>
+                Click To Detail
+              </Text>
+            </View>
+
+          </TouchableOpacity>
+
+          {item.status == 1 ? (
+            <TouchableOpacity style={{ width: '30%', height: 50, borderWidth: 1, marginEnd: 10, borderRadius: 10, alignItems: 'center' }} onPress={() => nextStatus(item._id)}>
+              <Text style={{ marginTop: 10, padding: 3, fontWeight: 'bold', fontSize: 15 }}>
+                Doing...
+              </Text>
+            </TouchableOpacity>
+          ) : item.status == 2 ? (
+            <TouchableOpacity style={{ width: '30%', height: 50, marginEnd: 10, borderRadius: 10, alignItems: 'center', elevation: 2 }} onPress={() => nextStatus(item._id)}>
+              <Text style={{ marginTop: 10, padding: 3, fontWeight: 'bold', fontSize: 14 }}>
+                Admin Check
+              </Text>
+            </TouchableOpacity>
+          ) : item.status == 3 ? (
+
+            <GetRewardButton address={selectedAccount?.publicKey} amount={item.id_mission.point} handleSuccess={() => nextStatus(item._id)} />
 
 
 
-      </TouchableOpacity>
+          ) : item.status == 4 ? (
+
+            null
 
 
-      {item.status === 0 ? (
-        <Button mode="outlined" onPress={() => nextStatus(item._id)}>Get Mission</Button>
-      ) : item.status === 1 ? (
-        <Button onPress={() => btnDoing(item._id)} mode="outlined" style={{ marginStart: 20 }} textColor="black">Doing...</Button>
-      ) : item.status === 2 ? (
-        <Button disabled>Admin Check</Button>
-      ) : item.status === 3 ? (
-        <Button mode="outlined" onPress={() => { }}>Get Sol</Button>
-      ) : null}
+
+          )
+
+            : null}
 
 
+
+        </View>
+      ) : (null)
+
+
+
+
+
+      }
     </View>
   );
 
@@ -127,18 +146,9 @@ export default function Rewart({ navigation }: { navigation: any }) {
 
 
     <View style={styles.screenContainer}>
-       <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalDoing}
-        onRequestClose={closeModal}
-      >
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
 
-          </View>
-        </View>
-      </Modal>
+
+
 
 
 
@@ -153,10 +163,11 @@ export default function Rewart({ navigation }: { navigation: any }) {
   );
 }
 // get reward
-async function GetRewardButton({
+function GetRewardButton({
   address,
   amount,
   handleSuccess,
+
 }: {
   address: PublicKey;
   amount: number;
@@ -179,6 +190,9 @@ async function GetRewardButton({
             .catch((err) => {
               console.log(err);
             });
+          setShowAirdropModal(false)
+          //// lỗi vẫn chạy handleSuccess /// 
+          handleSuccess()
         }}
         submitLabel="Get"
         submitDisabled={requestAirdrop.isPending}
@@ -187,14 +201,20 @@ async function GetRewardButton({
           <Text>Get {amount} SOL to your connected wallet account.</Text>
         </View>
       </AppModal>
-      <Button
-        mode="contained-tonal"
-        icon="check"
+      <TouchableOpacity
+
+        style={{
+          width: '30%', height: 50, marginEnd: 10, borderRadius: 10, alignItems: 'center', backgroundColor: '#2196F3', // Màu nền
+          elevation: 2
+        }}
         disabled={requestAirdrop.isPending}
         onPress={() => setShowAirdropModal(true)}
       >
-        SOL | {amount}
-      </Button>
+        <Text style={{ marginTop: 10, padding: 3, fontWeight: 'bold', fontSize: 15, color: 'white' }}>
+          Receive {amount} sol
+        </Text>
+
+      </TouchableOpacity>
     </>
   );
 }
@@ -205,10 +225,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   item: {
+    width: '100%',
     flexDirection: "row",
-
-    alignItems: "center",
-    padding: 12,
+    justifyContent: 'space-between',
     paddingTop: 20,
     paddingBottom: 20,
     marginTop: 10,
