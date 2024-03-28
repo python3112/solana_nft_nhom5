@@ -38,7 +38,10 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         
 
         try {
-            const response = await fetch(`${ipApi}api/auth/signup`, {
+
+            const response = await fetch(`${configApi()}api/auth/signup`, {
+
+
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -105,7 +108,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
                     <MaterialCommunityIcon name={hidePass ? "eye" : "eye-off"} size={25} />
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={handleSignup} style={styles.btnDK}>
+            <TouchableOpacity onPress={()=>handleSignup()} style={styles.btnDK}>
                 <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
         </SafeAreaView>

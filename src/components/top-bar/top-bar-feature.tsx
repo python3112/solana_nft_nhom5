@@ -2,13 +2,20 @@ import { StyleSheet, TouchableOpacity , Image, View } from "react-native";
 import { Appbar, useTheme , Avatar } from "react-native-paper";
 import { TopBarWalletButton, TopBarWalletMenu } from "./top-bar-ui";
 import { useNavigation } from "@react-navigation/core";
+import { useAuthorization } from "../../utils/useAuthorization";
 import {useEffect , useState} from 'react';
+import {
+  AccountBalance,
+  AccountButtonGroup,
+  AccountTokens,
+} from "../account/account-ui";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import configApi  from '../../navigators/config';
 const ipApi = "http://192.168.1.89:3000/";
 
 export function TopBar() {
   const navigation = useNavigation();
+  const { selectedAccount } = useAuthorization();
   const theme = useTheme();
 
   const [first, setfirst] = useState<any>([]);
@@ -36,11 +43,15 @@ export function TopBar() {
   return (
     <Appbar.Header mode="small" style={styles.topBar}>
       <View style={{marginStart : 10}}>
+
       <TopBarWalletMenu />
+  
       </View>
-      
+        <AccountBalance  address={selectedAccount?.publicKey || ''}>
+
+        </AccountBalance>
        <TouchableOpacity style={{ height :'100%' , alignContent:'center' ,marginTop:20 , marginEnd : 20 }} onPress={() => {navigation.navigate("Profiles")}}>
-        <Avatar.Image  style={{alignSelf:'center'}} size={40}  source={{ uri : first.avatar}}/>
+        {first== null ?  null :<Avatar.Image  style={{alignSelf:'center'}} size={40}  source={{ uri : first.avatar}}/> }
        </TouchableOpacity>
     </Appbar.Header>
   );
