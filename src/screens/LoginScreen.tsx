@@ -71,6 +71,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
             const check = await fetch(`${configApi()}api/auth/login`, {
 
+
+
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ username: username, password: password }),
