@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     Image,
     Text,
-    ToastAndroid
+    ToastAndroid,
+    Alert
 } from "react-native";
 
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
@@ -24,6 +25,7 @@ interface UserData {
     userpass: string;
     _id: string;
 }
+
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
@@ -68,15 +70,19 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         } else {
 
             const check = await fetch(`${configApi()}api/auth/login`, {
+
+
+
                 method: 'POST',
                 headers: { "Content-Type": "application/json", },
                 body: JSON.stringify({ username: username, password: password }),
             })
-
-            if (check.ok) {
+            
+                console.log(check)
+            if (check.ok == true) {
                 const responseData = await check.json();
                 await AsyncStorage.setItem("user", responseData.payload.data._id);
-                console.log(responseData.payload.data._id);
+                console.log(responseData.payload);
                 navigation.navigate('HomeStack');
                 
                 if (rememberPassword) {
@@ -90,7 +96,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
                 // await AsyncStorage.setItem('userID', check._id);
 
             } else {
-                ToastAndroid.show("Vui lòng nhập tài khoản", ToastAndroid.SHORT);
+                Alert.alert('Warning', 'Không có tài khoản');
             }
         }
     };

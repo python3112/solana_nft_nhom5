@@ -40,7 +40,7 @@ export function TopBar() {
       </View>
       
        <TouchableOpacity style={{ height :'100%' , alignContent:'center' ,marginTop:20 , marginEnd : 20 }} onPress={() => {navigation.navigate("Profiles")}}>
-        <Avatar.Image  style={{alignSelf:'center'}} size={40}  source={{ uri : first.avatar}}/>
+        {first== null ?  null :<Avatar.Image  style={{alignSelf:'center'}} size={40}  source={{ uri : first.avatar}}/> }
        </TouchableOpacity>
     </Appbar.Header>
   );
