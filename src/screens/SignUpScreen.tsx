@@ -38,7 +38,9 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
         
 
         try {
+
             const response = await fetch(`${ipApi}api/auth/signup`, {
+
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
