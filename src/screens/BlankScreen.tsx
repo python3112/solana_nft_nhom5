@@ -2,16 +2,16 @@ import React, { useState , useEffect } from 'react';
 import { View, SafeAreaView, FlatList, TouchableOpacity, StyleSheet , Image } from 'react-native';
 import { Button, Icon, Text, useTheme, Avatar } from "react-native-paper";
 const ipApi = "http://192.168.1.89:3000/";
+import configApi  from '../navigators/config';
 interface ItemProps {
   _id: number;
-  avata: string;
-  fullName:string,
-  userName:string,
-  userPass:string, 
-  adressWallet : string,
+  avatar: string;
+  fullname:string,
+  username:string,
+  password:string, 
+  public_key : string,
   point :number,
-  pointComplete : number,
-  userPms:string
+  role:string
 
 }
 
@@ -22,10 +22,10 @@ export default function Rewart({ navigation }: { navigation: any }) {
   useEffect( () => {
     const downloadData = async () => {
       try {
-        const response = await fetch(`${ipApi}users/topusers`);
+        const response = await fetch(`${configApi()}api/users/top-10-points`);
         const apiData = await response.json();
-        console.log(apiData)
-        setlistdata(apiData);
+        console.log(apiData.payload.data)
+        setlistdata(apiData.payload.data);
       } catch (error) {
         console.log(error);
       }
@@ -55,8 +55,8 @@ export default function Rewart({ navigation }: { navigation: any }) {
   
       <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Avatar.Image size={50} source={{ uri: item.avata }} />
-          <Text style={{ marginStart: 10 }} variant="titleMedium">{item.fullName}</Text>
+          <Avatar.Image size={50} source={item.avatar ===  null ? require('../../images/man.png') : {uri :  item.avatar} } />
+          <Text style={{ marginStart: 10 }} variant="titleMedium">{item.fullname}</Text>
         </View>
       
         <Image source={getRewardImage(index)}/>
@@ -76,7 +76,6 @@ export default function Rewart({ navigation }: { navigation: any }) {
   
   return (
     <SafeAreaView style={{ width: '90%', height: '100%', alignSelf: 'center' }}>
-      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Ranking</Text>
       <FlatList
         data={listdata}
         keyExtractor={e => e._id.toString()}

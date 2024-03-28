@@ -20,8 +20,10 @@ import {
   DataTable,
   TextInput,
 } from "react-native-paper";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-const ipApi = "http://192.168.1.89:3000/";
+import configApi  from '../navigators/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 interface user {
   _id: number;
   avata: string;
@@ -39,26 +41,32 @@ export function HomeScreen() {
   const [ttuser, setUser] = useState<user>();
 
 
-
   useEffect(() => {
-    const getUser = async () => {
-      const user = await AsyncStorage.getItem("user");
-      const check = await fetch(`${ipApi}users/getone/${user}`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json", }, 
-    })
-    if(check.ok){
-      const last =  await check.json();
-      console.log(last)
-      setUser(last);
-    }else{return;}
-    
-
+    if(selectedAccount){
+      const connectWallet = async() =>{
+        try {
+          const value = await AsyncStorage.getItem('user');
+          const checkApi = await fetch(`${configApi()}api/users/${value}/connect-to-wallet`, {
+            method: 'PATCH',
+            headers: { "Content-Type": "application/json", },
+            body: JSON.stringify({public_key : selectedAccount.publicKey }),
+           
+        })
+          if(checkApi.ok){
+            console.log('ok')
+          }
+        } catch (error) {
+            console.log(error)
+        }
+       
+      }
+      connectWallet();
+    }else{
+      return ;
     }
-    getUser();
-
-  }, [])
-
+    
+  }, [selectedAccount])
+  
 
   return (
     <View style={styles.screenContainer}>
@@ -87,7 +95,7 @@ export function HomeScreen() {
             <TouchableOpacity style={styles.item}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 
-                {/* <Avatar.Image size={50} source={{uri : ttuser.avata}} /> */}
+                <Avatar.Image size={50} source={require('../../images/logoSol.png')} />
                 <Text style={{
                   fontWeight: 'bold',
                   fontSize: 22,

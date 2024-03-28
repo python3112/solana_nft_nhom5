@@ -60,7 +60,7 @@ const AppStack = () => {
       <Stack.Screen 
       name="Login"
       component={LoginScreen}
-      options={{ headerShown: false }}
+      options={{ headerShown: false  }}
       />
       <Stack.Screen
         name="HomeStack"
@@ -68,8 +68,8 @@ const AppStack = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false ,headerTitle : 'Register Account'   }} />
-      <Stack.Screen name="Profiles" component={ProfileScreen} />
-      <Stack.Screen name="deital" component={DeitalMission} />
+      <Stack.Screen name="Profiles" component={ProfileScreen}  options={{ headerTitle : 'Profile' }} />
+      <Stack.Screen name="deital" component={DeitalMission}  options={{ headerTitle : 'Deital Mission' }} />
       <Stack.Screen name="deitalAcc" component={DeitalAccountRanking}  options={{ headerTitle : 'Deital Account' }} />
    
       {/** 🔥 Your screens go here */}

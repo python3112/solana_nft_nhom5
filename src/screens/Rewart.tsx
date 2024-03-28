@@ -1,138 +1,159 @@
 /**
  * dev: ManhThai
  */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FlatList,
   StyleSheet,
   ToastAndroid,
   TouchableOpacity,
   View,
+  Platform,
+  Image,
+  Modal
+
 } from "react-native";
-import { Button, Icon, Text, useTheme } from "react-native-paper";
+import { Button, Icon, Text, Title, useTheme } from "react-native-paper";
 import { useRequestAirdrop } from "../components/account/account-data-access";
 import { PublicKey } from "@solana/web3.js";
 import { useAuthorization } from "../utils/useAuthorization";
 import { AppModal } from "../components/ui/app-modal";
+import configApi from '../navigators/config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Item } from "react-native-paper/lib/typescript/components/Drawer/Drawer";
 
-// data
-const missions = [
-  {
-    id: "1",
-    title: "Connect with the app ",
-    point: 1,
-    completed: true,
-  },
-  {
-    id: "2",
-    title: "Set public key for account",
-    point: 5,
-    completed: true,
-  },
-  {
-    id: "3",
-    title: "Mission C",
-    point: 2.777,
-    completed: true,
-  },
-  {
-    id: "4",
-    title: "Mission D",
-    point: 2,
-    completed: false,
-  },
-  {
-    id: "5",
-    title: "Mission e",
-    point: 2,
-    completed: false,
-  },
-];
 
-type Mission = {
-  id: string;
-  title: string;
-  point: number;
-  completed: boolean;
-};
 
 export default function Rewart({ navigation }: { navigation: any }) {
   const { selectedAccount } = useAuthorization();
+  const [data, setData] = useState();
+  const [reset, setreset] = useState(true);
+  const [modalDoing, setmodalDoing] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState(null);
 
-  if (!selectedAccount) {
-    return null;
+  useEffect(() => {
+    if (reset) {
+      const getMiss = async () => {
+        try {
+          const value = await AsyncStorage.getItem('user');
+          const checkApi = await fetch(`${configApi()}api/missions?id_user=${value}`)
+
+          const response = await checkApi.json();
+          // Await here to get the JSON data
+
+          console.log(response.payload.nhiemVu)
+
+          setData(response.payload.nhiemVu)
+        } catch (error) {
+          console.log(error)
+        }
+
+      }
+      getMiss()
+      setreset(false);
+    }
+
+  }, [reset])
+
+
+  const nextStatus = async (id: string) => {
+    try {
+
+      const checkApi = await fetch(`${configApi()}api/missions/${id}/next-status`, {
+        method: 'PATCH',
+        headers: { "Content-Type": "application/json", },
+
+
+      })
+      if (checkApi.ok) {
+        setreset(true);
+      }
+    } catch (error) {
+      console.log(error)
+    }
+
+
   }
 
-  const theme = useTheme();
-  const [data, setData] = useState(missions);
 
-  const getReward = (item :  Mission) => {
-    console.log(`get reward: ${item.point}`);
-    const newData = data.filter((mission) => mission.id !== item.id);
-    setData(newData);
-  };
+  const btnDoing = ({id}) => {
+    setSelectedItemId(id);
+    setmodalDoing(true);
+  }
 
-  const doMission = (item :  Mission) => {
-    console.log(`do mission: ${item.title}`);
-    ToastAndroid.show(
-      "Complete the mission to receive rewards",
-      ToastAndroid.SHORT
-    );
-  };
+  const closeModal = () => {
+    setmodalDoing(false);
+    setSelectedItemId(null);
+  }
 
 
-  const renderItem = ({ item }:  {item : Mission}) => (
-    <TouchableOpacity style={styles.item}   onPress={() => navigation.navigate("deital", { item })}>
-      <View>
-        <Text variant="titleMedium">{item.title}</Text>
+
+
+  const renderItem = ({ item }) => (
+
+    <View style={styles.item} >
+
+
+      <TouchableOpacity style={{ width: '65%', height: '100%' }} onPress={() => navigation.navigate("deital", { item:  item._id })}>
+        <Text variant="titleMedium">{item.id_mission.title}</Text>
         <Text
-          variant="labelSmall"
-          style={{
-            fontStyle: "italic",
-            color: item.completed
-              ? theme.colors.primary
-              : theme.colors.secondary,
-          }}
+
+          style={{ marginTop: 10, fontSize: 10 }}
         >
-          {item.completed ? "Click to get SOL" : "Do this mission to get SOL"}
+          Click To Deital
         </Text>
-      </View>
-      {/* {item.completed ? (
-        <GetRewardButton
-          address={selectedAccount.publicKey}
-          amount={item.point}
-          handleSuccess={() => getReward(item)}
-        />
-      ) : (
-        <Button
-          mode="elevated"
-          onPress={() => doMission(item)}
-          icon="progress-alert"
-        >
-          SOL | {item.point}
-        </Button>
-      )} */}
-    </TouchableOpacity>
+
+
+
+      </TouchableOpacity>
+
+
+      {item.status === 0 ? (
+        <Button mode="outlined" onPress={() => nextStatus(item._id)}>Get Mission</Button>
+      ) : item.status === 1 ? (
+        <Button onPress={() => btnDoing(item._id)} mode="outlined" style={{ marginStart: 20 }} textColor="black">Doing...</Button>
+      ) : item.status === 2 ? (
+        <Button disabled>Admin Check</Button>
+      ) : item.status === 3 ? (
+        <Button mode="outlined" onPress={() => { }}>Get Sol</Button>
+      ) : null}
+
+
+    </View>
   );
 
   return (
 
-    
+
 
     <View style={styles.screenContainer}>
-      
-      <Text style={{ alignSelf: 'center', fontSize: 25, marginBottom: 20, fontWeight: "bold" }}>Mission and reward</Text>
+       <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalDoing}
+        onRequestClose={closeModal}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <View style={{ backgroundColor: 'white', padding: 20, borderRadius: 10, alignItems: 'center' }}>
+
+          </View>
+        </View>
+      </Modal>
+
+
 
       <FlatList
         data={data}
         renderItem={renderItem}
-        keyExtractor={({ id }) => id}
+        keyExtractor={({ _id }) => _id}
       />
+
+
     </View>
   );
 }
 // get reward
-async function  GetRewardButton({
+async function GetRewardButton({
   address,
   amount,
   handleSuccess,
@@ -141,12 +162,12 @@ async function  GetRewardButton({
   amount: number;
   handleSuccess: () => void;
 }) {
-   const requestAirdrop = useRequestAirdrop({ address });
+  const requestAirdrop = useRequestAirdrop({ address });
   const [showAirdropModal, setShowAirdropModal] = useState(false);
 
   return (
     <>
-    {}
+      { }
       <AppModal
         title="Get Reward"
         hide={() => setShowAirdropModal(false)}
@@ -185,12 +206,14 @@ const styles = StyleSheet.create({
   },
   item: {
     flexDirection: "row",
-    justifyContent: "space-between",
+
     alignItems: "center",
-    padding: 16,
-    margin: 8,
+    padding: 12,
+    paddingTop: 20,
+    paddingBottom: 20,
+    marginTop: 10,
     borderRadius: 16,
-    backgroundColor: "#fff",
+    backgroundColor: "#fcff",
     elevation: 4,
   },
 });
