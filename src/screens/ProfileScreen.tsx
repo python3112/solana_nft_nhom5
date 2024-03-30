@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, SafeAreaView, Button, Modal, TextInput, TouchableOpacity, Text } from "react-native";
+import { View, StyleSheet, SafeAreaView, Modal, TextInput, TouchableOpacity, Text, KeyboardAvoidingView } from "react-native";
 import { Avatar, Title, Caption } from "react-native-paper";
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
 import axios from 'axios';
 
-const API_URL = 'http://192.168.1.17:3000/';
+const API_URL = 'http://192.168.1.211:3000/';
 
 export default function ProfileScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -25,8 +25,7 @@ export default function ProfileScreen() {
 
   const getProfile = async () => {
     try {
-      // Lấy ID người dùng từ máy chủ
-      const userId = "6603db44509e30c999d1f7af"; // Thay đổi thành cách lấy ID từ máy chủ của bạn
+      const userId = "660503df607164144755e1b0"; 
       const response = await axios.get(`${API_URL}api/users/${userId}`);
       const data = response.data;
       console.log(data)
@@ -51,8 +50,7 @@ export default function ProfileScreen() {
         email: email,
         avatar: newAvatarUrl || avatarUrl
       };
-      // Lấy ID người dùng từ máy chủ (nếu cần)
-      const userId = "6603db44509e30c999d1f7af"; // Thay đổi thành cách lấy ID từ máy chủ của bạn
+      const userId = "660503df607164144755e1b0"; 
       const response = await axios.patch(`${API_URL}api/users/${userId}`, newData);
       const updatedData = response.data;
       setShowSuccessModal(true);
@@ -87,7 +85,11 @@ export default function ProfileScreen() {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <Button title="Edit profile" onPress={toggleModal} />
+            <TouchableOpacity 
+              style={[styles.editButton, { backgroundColor: '#ff0000' }]} 
+              onPress={toggleModal}>
+              <Text style={styles.editButtonText}>Edit profile</Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -133,7 +135,7 @@ export default function ProfileScreen() {
         transparent={true}
         onRequestClose={toggleModal}
       >
-        <View style={styles.modalContainer}>
+        <KeyboardAvoidingView style={styles.modalContainer} behavior="padding">
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Edit Profile</Text>
             <TextInput
@@ -177,7 +179,7 @@ export default function ProfileScreen() {
               <Text style={styles.saveButtonText}>Save</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <Modal
@@ -188,8 +190,12 @@ export default function ProfileScreen() {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
+            <MaterialCommunityIcon name="check-circle" color="#00FF00" size={64} />
             <Text style={styles.modalTitle}>Success!</Text>
             <Text style={styles.modalText}>Profile updated successfully.</Text>
+            <TouchableOpacity onPress={() => setShowSuccessModal(false)}>
+              <Text style={styles.okButtonText}>OK</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -200,14 +206,13 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0e6eb8',
+    backgroundColor: '#add8e6',
   },
   contentContainer: {
     flex: 1,
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingBottom: 20,
-    backgroundColor: '#ffffff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20, 
   },
@@ -227,8 +232,10 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   caption: {
-    fontSize: 14,
-    color: '#777',
+    marginTop:12,
+    fontSize: 17,
+    color: '#000000',
+    fontWeight:'bold'
   },
   infoSection: {
     marginTop: 10,
@@ -237,6 +244,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 10,
+    backgroundColor:'#ffffff'
   },
   labelText: {
     marginLeft: 10,
@@ -267,19 +279,26 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    
   },
   infoBoxCaption: {
     fontSize: 14,
     color: '#777',
     marginBottom:50,
-
   },
   buttonContainer: {
     alignSelf: 'center',
     width:200,
     marginTop: 30,
-    
+  },
+  editButton: {
+    backgroundColor: '#ff0000',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 16,
   },
   modalContainer: {
     flex: 1,
@@ -293,6 +312,7 @@ const styles = StyleSheet.create({
     paddingVertical: 30,
     borderRadius: 10,
     width: '80%',
+    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 24,
@@ -310,9 +330,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,
+    width: '100%',
   },
   saveButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#ff0000',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -320,5 +341,13 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: '#fff',
     fontSize: 16,
+    width:100,
+    textAlign: 'center'
   },
-});
+  okButtonText: {
+    color: '#007bff',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 10,
+  },
+}); 

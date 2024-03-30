@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, SafeAreaView, TouchableOpacity, Image, Text, Alert, ToastAndroid } from 'react-native';
 import { TextInput } from '@react-native-material/core';
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-const ipApi = "http://192.168.1.17:3000/";
+const ipApi = "http://192.168.1.211:3000/";
 export default function SignUpScreen({ navigation }: { navigation: any }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -39,7 +39,7 @@ export default function SignUpScreen({ navigation }: { navigation: any }) {
 
         try {
 
-            const response = await fetch(`${configApi()}api/auth/signup`, {
+            const response = await fetch(`${ipApi}api/auth/signup`, {
 
 
                 method: 'POST',
