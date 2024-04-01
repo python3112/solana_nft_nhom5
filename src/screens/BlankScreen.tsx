@@ -1,7 +1,7 @@
 import React, { useState , useEffect } from 'react';
 import { View, SafeAreaView, FlatList, TouchableOpacity, StyleSheet , Image } from 'react-native';
 import { Button, Icon, Text, useTheme, Avatar } from "react-native-paper";
-const ipApi = "http://192.168.1.89:3000/";
+const ipApi = "http://192.168.1.211:3000/";
 import configApi  from '../navigators/config';
 interface ItemProps {
   _id: number;
