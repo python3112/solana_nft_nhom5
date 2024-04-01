@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, Modal, TextInput, TouchableOpacity, Text, KeyboardAvoidingView } from "react-native";
 import { Avatar, Title, Caption } from "react-native-paper";
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
+import configApi from '../navigators/config';
 import axios from 'axios';
 
 const API_URL = 'http://192.168.1.211:3000/';
@@ -26,7 +27,7 @@ export default function ProfileScreen() {
   const getProfile = async () => {
     try {
       const userId = "660503df607164144755e1b0"; 
-      const response = await axios.get(`${API_URL}api/users/${userId}`);
+      const response = await axios.get(`${configApi()}api/users/${userId}`);
       const data = response.data;
       console.log(data)
       setName(data.payload.data.fullname);
