@@ -1,207 +1,195 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, SafeAreaView, Modal, TextInput, TouchableOpacity, Text, KeyboardAvoidingView } from "react-native";
-import { Avatar, Title, Caption } from "react-native-paper";
+import { Avatar } from "react-native-paper";
 import MaterialCommunityIcon from "@expo/vector-icons/MaterialCommunityIcons";
-import configApi from '../navigators/config';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import configApi  from '../navigators/config';
 
 const API_URL = 'http://192.168.1.211:3000/';
+const DEFAULT_AVATAR_URL = 'https://example.com/default_avatar.jpg';
 
 export default function ProfileScreen() {
-  // const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [name, setName] = useState("");
-  // const [username, setUsername] = useState("");
-  // const [address, setAddress] = useState("");
-  // const [phoneNumber, setPhoneNumber] = useState("");
-  // const [email, setEmail] = useState("");
-  // const [password, setPassword] = useState("");
-  // const [showSuccessModal, setShowSuccessModal] = useState(false);
-  // const [avatarUrl, setAvatarUrl] = useState("");
-  // const [newAvatarUrl, setNewAvatarUrl] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [newAvatarUrl, setNewAvatarUrl] = useState("");
 
-  // const toggleModal = () => {
-  //   setIsModalVisible(!isModalVisible);
-  // };
-  
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
 
-  // const getProfile = async () => {
-  //   try {
-  //     const userId = "660503df607164144755e1b0"; 
-  //     const response = await axios.get(`${configApi()}api/users/${userId}`);
-  //     const data = response.data;
-  //     console.log(data)
-  //     setName(data.payload.data.fullname);
-  //     setUsername(data.payload.data.username);
-  //     setAddress(data.payload.data.address);
-  //     setPhoneNumber(data.payload.data.phoneNumber);
-  //     setEmail(data.payload.data.email);
-  //     setAvatarUrl(data.payload.data.avatar);
-  //   } catch (error) {
-  //     console.error('Error fetching profile:', error);
-  //   }
-  // };
+  const getProfile = async () => {
+    try{
+      const userId = await AsyncStorage.getItem('user');
+      const response = await axios.get(`${configApi()}api/users/${userId}`);
+      const data = response.data;
+      setName(data.payload.data.fullname);
+      setUsername(data.payload.data.username);
+      setPassword(data.payload.data.password)
+      setAvatarUrl(data.payload.data.avatar);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
-  // const updateProfile = async () => {
-  //   try {
-  //     const newData = {
-  //       fullname: name,
-  //       username: username,
-  //       address: address,
-  //       phoneNumber: phoneNumber,
-  //       email: email,
-  //       avatar: newAvatarUrl || avatarUrl
-  //     };
-  //     const userId = "660503df607164144755e1b0"; 
-  //     const response = await axios.patch(`${API_URL}api/users/${userId}`, newData);
-  //     const updatedData = response.data;
-  //     setShowSuccessModal(true);
-  //     setTimeout(() => {
-  //       setShowSuccessModal(false);
-  //     }, 3000);
-  //   } catch (error) {
-  //     console.error('Error updating profile:', error);
-  //   }
-  // };
+  const updateProfile = async () => {
+    try {
+      const newData = {
+        fullname: name,
+        username: username,
+        password: password,
+        avatar: newAvatarUrl || avatarUrl || DEFAULT_AVATAR_URL
+      };
+      const userId = await AsyncStorage.getItem('user');
+      const response = await axios.patch(`${configApi()}api/users/${userId}`, newData);
+      const updatedData = response.data;
+      setShowSuccessModal(true);
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 3000);
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
 
-  // useEffect(() => {
-  //   getProfile();
-  // }, []);
+  useEffect(() => {
+    getProfile();
+  }, []);
 
-  // const saveProfile = () => {
-  //   updateProfile();
-  //   toggleModal();
-  // };
+  const saveProfile = () => {
+    updateProfile();
+    toggleModal();
+  };
 
-  // return (
-  //   <SafeAreaView style={styles.container}>
-  //     <View style={styles.contentContainer}>
-  //       <View style={styles.userInfoSection}>
-  //         <View style={styles.avatarContainer}>
-  //           <Avatar.Image
-  //             source={{ uri: newAvatarUrl || avatarUrl }}
-  //             size={150} />
-  //           <View style={styles.userInfo}>
-  //             <Title style={styles.title}>{name}</Title>
-  //             <Caption style={styles.caption}>{username}</Caption>
-  //           </View>
-  //         </View>
-  //         <View style={styles.buttonContainer}>
-  //           <TouchableOpacity 
-  //             style={[styles.editButton, { backgroundColor: '#ff0000' }]} 
-  //             onPress={toggleModal}>
-  //             <Text style={styles.editButtonText}>Edit profile</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       </View>
+  return (
+    <SafeAreaView style={styles.container}>
+      <View style={styles.contentContainer}>
+        <View style={styles.avatarContainer}>
+          <Avatar.Image
+            source={{ uri: newAvatarUrl || avatarUrl || DEFAULT_AVATAR_URL }}
+            size={150} />
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={[styles.editButton, { backgroundColor: '#ff0000' }]} 
+            onPress={toggleModal}>
+            <Text style={styles.editButtonText}>Edit profile</Text>
+          </TouchableOpacity>
+        </View>
 
-  //       <View style={styles.infoSection}>
-  //         <View style={styles.infoRow}>
-  //           <MaterialCommunityIcon
-  //             name="map-marker-radius"
-  //             color="#777777"
-  //             size={20}/>
-  //           <Text style={styles.labelText}>{address}</Text>
-  //         </View>
-  //         <View style={styles.infoRow}>
-  //           <MaterialCommunityIcon
-  //             name="phone"
-  //             color="#777777"
-  //             size={20}/>
-  //           <Text style={styles.infoText}>{phoneNumber}</Text>
-  //         </View>
-  //         <View style={styles.infoRow}>
-  //           <MaterialCommunityIcon
-  //             name="email"
-  //             color="#777777"
-  //             size={20}/>
-  //           <Text style={styles.infoText}>{email}</Text>
-  //         </View>
-  //       </View>
-
-  //       <View style={styles.infoBoxWrapper}>
-  //         <View style={styles.infoBox}>
-  //           <Title style={styles.infoBoxTitle}>10</Title>
-  //           <Caption style={styles.infoBoxCaption}>Received</Caption>
-  //         </View>
-  //         <View style={styles.infoBox}>
-  //           <Title style={styles.infoBoxTitle}>10</Title>
-  //           <Caption style={styles.infoBoxCaption}>Mission</Caption>
-  //         </View>
-  //       </View>
-  //     </View>
+        <View style={styles.infoSection}>
+          <View style={styles.infoRow}>
+            <MaterialCommunityIcon
+              name="account"
+              color="#777777"
+              size={20}/>
+            <Text style={styles.labelText}>{name}</Text>
+          </View>
+          <View style={styles.infoRow}>
+            <MaterialCommunityIcon
+              name="account-box"
+              color="#777777"
+              size={20}/>
+            <Text style={styles.infoText}>{username}</Text>
+          </View>
+          <View style={styles.passwordInputContainer}>
+            <TextInput
+              style={[styles.input, styles.passwordInput]}
+              placeholder="Password"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              style={styles.showPasswordButton}
+              onPress={() => setShowPassword(!showPassword)}>
+              <MaterialCommunityIcon
+                name={showPassword ? "eye-off-outline" : "eye-outline"}
+                color="#777777"
+                size={24}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+      </View>
       
-  //     <Modal
-  //       visible={isModalVisible}
-  //       animationType="slide"
-  //       transparent={true}
-  //       onRequestClose={toggleModal}
-  //     >
-  //       <KeyboardAvoidingView style={styles.modalContainer} behavior="padding">
-  //         <View style={styles.modalContent}>
-  //           <Text style={styles.modalTitle}>Edit Profile</Text>
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Name"
-  //             value={name}
-  //             onChangeText={setName}
-  //           />
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Address"
-  //             value={address}
-  //             onChangeText={setAddress}
-  //           />
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Phone Number"
-  //             value={phoneNumber}
-  //             onChangeText={setPhoneNumber}
-  //           />
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Email"
-  //             value={email}
-  //             onChangeText={setEmail}
-  //           />
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Password"
-  //             secureTextEntry={true}
-  //             value={password}
-  //             onChangeText={setPassword}
-  //           />
-  //           <TextInput
-  //             style={styles.input}
-  //             placeholder="Avatar URL"
-  //             value={newAvatarUrl}
-  //             onChangeText={setNewAvatarUrl}
-  //           />
-  //           <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
-  //             <Text style={styles.saveButtonText}>Save</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       </KeyboardAvoidingView>
-  //     </Modal>
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={toggleModal}
+      >
+        <KeyboardAvoidingView style={styles.modalContainer} behavior="padding">
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Name"
+              value={name}
+              onChangeText={setName}
+            />
+            {/* <TextInput
+              style={styles.input}
+              placeholder="Username"
+              value={username}
+              onChangeText={setUsername}
+            /> */}
+            <View style={styles.passwordInputContainer}>
+              <TextInput
+                style={[styles.input, styles.passwordInput]}
+                placeholder="Password"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <TouchableOpacity
+                style={styles.showPasswordButton}
+                onPress={() => setShowPassword(!showPassword)}>
+                <MaterialCommunityIcon
+                  // name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  color="#777777"
+                  size={24}
+                />
+              </TouchableOpacity>
+            </View>
+            <TextInput
+              style={styles.input}
+              placeholder="Avatar URL"
+              value={newAvatarUrl}
+              onChangeText={setNewAvatarUrl}
+            />
+            <TouchableOpacity style={styles.saveButton} onPress={saveProfile}>
+              <Text style={styles.saveButtonText}>Save</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      </Modal>
 
-  //     <Modal
-  //       visible={showSuccessModal}
-  //       animationType="slide"
-  //       transparent={true}
-  //       onRequestClose={() => setShowSuccessModal(false)}
-  //     >
-  //       <View style={styles.modalContainer}>
-  //         <View style={styles.modalContent}>
-  //           <MaterialCommunityIcon name="check-circle" color="#00FF00" size={64} />
-  //           <Text style={styles.modalTitle}>Success!</Text>
-  //           <Text style={styles.modalText}>Profile updated successfully.</Text>
-  //           <TouchableOpacity onPress={() => setShowSuccessModal(false)}>
-  //             <Text style={styles.okButtonText}>OK</Text>
-  //           </TouchableOpacity>
-  //         </View>
-  //       </View>
-  //     </Modal>
-  //   </SafeAreaView>
-  // );
+      <Modal
+        visible={showSuccessModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowSuccessModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <MaterialCommunityIcon name="check-circle" color="#00FF00" size={64} />
+            <Text style={styles.modalTitle}>Success!</Text>
+            <Text style={styles.modalText}>Profile updated successfully.</Text>
+            <TouchableOpacity onPress={() => setShowSuccessModal(false)}>
+              <Text style={styles.okButtonText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -217,29 +205,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20, 
   },
-  userInfoSection: {
-    marginTop: 50,
-  },
   avatarContainer: {
     alignItems: 'center',
-  },
-  userInfo: {
-    marginTop: 30,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  caption: {
-    marginTop:12,
-    fontSize: 17,
-    color: '#000000',
-    fontWeight:'bold'
+    marginTop:100
   },
   infoSection: {
-    marginTop: 10,
+    marginBottom:70,
+
   },
   infoRow: {
     flexDirection: 'row',
@@ -252,39 +224,36 @@ const styles = StyleSheet.create({
     backgroundColor:'#ffffff'
   },
   labelText: {
-    marginLeft: 10,
+    marginLeft: 20,
     fontSize: 20,
     color: '#555',
     fontWeight:'bold',
-    fontStyle:'italic'
   },
   infoText: {
-    marginLeft: 10,
+    marginLeft: 20,
     fontSize: 20,
     color: '#333',
     fontWeight:'bold',
-    fontStyle:'italic'
   },
-  infoBoxWrapper: {
+  passwordInputContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingTop: 30,
-  },
-  infoBox: {
-    flex: 1,
     alignItems: 'center',
+    marginBottom: 40,
+    position: 'relative',
   },
-  infoBoxTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+  passwordInput: {
+    flex: 1,
+    borderWidth: 2,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor:'#ffffff',
+   
   },
-  infoBoxCaption: {
-    fontSize: 14,
-    color: '#777',
-    marginBottom:50,
+  showPasswordButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: 22,
   },
   buttonContainer: {
     alignSelf: 'center',
@@ -311,7 +280,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 20,
     paddingVertical: 30,
-    borderRadius: 10,
+    borderRadius: 20,
     width: '80%',
     alignItems: 'center',
   },
@@ -338,6 +307,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
+    marginTop:10
   },
   saveButtonText: {
     color: '#fff',
@@ -351,4 +321,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 10,
   },
-}); 
+});
